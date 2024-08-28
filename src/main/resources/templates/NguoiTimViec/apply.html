@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ứng Tuyển Công Việc</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>\
+    <link rel="stylesheet" href="/NguoiTimViec.css">
+</head>
+<body>
+<header>
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <div class="container-fluid">
+                <!-- Logo -->
+                <a class="navbar-brand" href="index.html">
+                    <span>R</span>|<span class="text-muted">S</span> Việc Làm
+                </a>
+                <!-- Toggle Button for Mobile View -->
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <!-- Navigation Menu -->
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav mx-auto">
+                        <li class="nav-item">
+                            <a class="nav-link active" aria-current="page" th:href="@{/nguoitimviec}">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/about}">About</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/cv}">CV Mẫu</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="contact.html">Contact</a>
+                        </li>
+                    </ul>
+                    <!-- Call to Action Buttons and Dropdown Menu -->
+                    <div class="d-flex align-items-center">
+                        <a class="btn btn-outline-primary me-2" href="cart.html" th:href="@{/cart}">
+                            <i class="bi bi-cart"></i> <!-- Cart Icon -->
+                        </a>
+                        <div class="dropdown">
+                            <a class="btn btn-primary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
+                                <span class="me-2">🔒</span> Account
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                                <li><a class="dropdown-item" th:href="@{/login}" href="login.html">Log In</a></li>
+                                <li><a class="dropdown-item" th:href="@{/auth/logout}" href="/auth/logout">Đăng xuất</a></li>
+                                  <li><a class="dropdown-item" th:href="@{/auth/quanlytaikhoan/user}" href="/auth//quanlytaikhoan/user">Cập nhật thông tin cá nhân</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <div class="container mt-5">
+        <h1 class="mb-4">Ứng Tuyển Công Việc</h1>
+        <form id="applyJobForm">
+            <input type="hidden" name="jobId" th:value="${jobId}" />
+            <div class="form-group">
+                <label for="name">Họ và Tên:</label>
+                <input type="text" class="form-control" id="name" name="name" required>
+            </div>
+            <div class="form-group">
+                <label for="phone">Số Điện Thoại:</label>
+                <input type="text" class="form-control" id="phone" name="phone" required>
+            </div>
+            <div class="form-group">
+                <label for="cvFile">Tải lên CV:</label>
+                <input type="file" class="form-control-file" id="cvFile" name="cvFile" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Nộp Đơn</button>
+        </form>
+        <div id="responseMessage" class="mt-3"></div>
+    </div>
+       <footer class="bg-light text-center text-lg-start">
+        <div class="container p-4">
+            <div class="row">
+                <div class="col-lg-4 col-md-12 mb-4 mb-md-0">
+                    <div class="footer-logo">
+                        <span>R</span>|<span class="text-muted">S</span> Việc Làm
+                    </div>
+                    <p>
+                        We offer a range of job opportunities and recruitment services.
+                        Our mission is to connect talented professionals with top
+                        companies.
+                    </p>
+                </div>
+                <div class="col-lg-4 col-md-6 mb-4 mb-md-0">
+                    <h5>Links</h5>
+                    <ul class="list-unstyled footer-links">
+                        <li><a href="about.html">About Us</a></li>
+                        <li><a href="services.html">Services</a></li>
+                        <li><a href="blog.html">Blog</a></li>
+                        <li><a href="contact.html">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-4 col-md-6 mb-4 mb-md-0">
+                    <h5>Follow Us</h5>
+                    <div class="footer-social-icons">
+                        <a href="#"><i class="bi bi-facebook"></i></a>
+                        <a href="#"><i class="bi bi-twitter"></i></a>
+                        <a href="#"><i class="bi bi-linkedin"></i></a>
+                        <a href="#"><i class="bi bi-instagram"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="text-center p-3 bg-light">
+            &copy; 2024 R|S Việc Làm. All rights reserved.
+        </div>
+    </footer>
+
+    <script>
+        $(document).ready(function() {
+            $('#applyJobForm').on('submit', function(event) {
+                event.preventDefault(); // Ngăn chặn gửi form theo cách mặc định
+
+                var formData = new FormData(this);
+                var jobId = $('#jobId').val();
+                formData.append('jobId', jobId);
+
+                $.ajax({
+                    url: 'http://localhost:8080/api/applications/apply-job',
+                    type: 'POST',
+                    data: formData,
+                    processData: false, // Không xử lý dữ liệu
+                    contentType: false, // Không gửi content-type
+                    success: function(response) {
+                        $('#responseMessage').html('<div class="alert alert-success">Đơn ứng tuyển đã được gửi thành công!</div>');
+                        $('#applyJobForm')[0].reset(); // Reset form sau khi gửi thành công
+                    },
+                    error: function(xhr, status, error) {
+                        $('#responseMessage').html('<div class="alert alert-danger">Có lỗi xảy ra: ' + xhr.responseText + '</div>');
+                    }
+                });
+            });
+        });
+    </script>
+    
+</body>
+</html>

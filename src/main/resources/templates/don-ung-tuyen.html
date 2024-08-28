@@ -1,0 +1,54 @@
+<!-- don-ung-tuyen.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	th:replace="~{index::dynamic(~{::body})}">
+<
+<head>
+<meta charset="UTF-8">
+<title>Danh Sách Đơn Ứng Tuyển</title>
+<link rel="stylesheet"
+	href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+	<div class="container mx-auto px-4 py-8">
+		<div class="custom-card">
+			<div class="custom-card-header">Danh Sách Đơn Ứng Tuyển</div>
+			<div class="p-4">
+				<table class="w-full text-left border-collapse">
+					<thead>
+						<tr class="bg-gray-100 text-gray-600">
+							<th class="py-3 px-4 border-b">ID</th>
+							<th class="py-3 px-4 border-b">Job Title</th>
+							<th class="py-3 px-4 border-b">Description</th>
+
+							<th class="py-3 px-4 border-b">Applicant Name</th>
+							<th class="py-3 px-4 border-b">Phone</th>
+							<th class="py-3 px-4 border-b">Status</th>
+							<th class="py-3 px-4 border-b">CV</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:each="app : ${ut}">
+							<td class="py-2 px-4 border-b" th:text="${app.applicationID}"></td>
+							<td class="py-2 px-4 border-b" th:text="${app.job.title}"></td>
+							<td class="py-2 px-4 border-b" th:text="${app.job.description}"></td>
+
+							<td class="py-2 px-4 border-b" th:text="${app.name}"></td>
+							<td class="py-2 px-4 border-b" th:text="${app.phone}"></td>
+							<td class="py-2 px-4 border-b"><span
+								th:class="'custom-status-label ' + 
+                                    (app.status == 'Đang xử lý' ? 'custom-status-processing' : 
+                                    (app.status == 'Đã duyệt' ? 'custom-status-approved' : 'custom-status-rejected'))"
+								th:text="${app.status}"></span></td>
+							<td class="py-2 px-4 border-b">
+    <a th:href="${app.cvURL}" class="custom-cv-link" target="_blank">View CV</a>
+</td>
+
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	th:replace="~{index::dynamic(~{::body})}">
+<head>
+<meta charset="UTF-8">
+<title>Chi tiết ứng viên và đánh giá</title>
+<link rel="stylesheet"
+	href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<style>
+.small-card {
+	max-width: 18rem; /* Giới hạn chiều rộng thẻ card */
+	margin: auto; /* Căn giữa thẻ card */
+}
+
+.small-img {
+	max-width: 100%;
+	/* Đảm bảo ảnh không vượt quá chiều rộng của thẻ chứa */
+	height: auto; /* Giữ tỉ lệ khung hình */
+}
+</style>
+</head>
+<body>
+	<div class="container mt-5">
+		<h1>Thông tin ứng viên và đánh giá</h1>
+
+		<!-- Thông báo -->
+		<div th:if="${success}" class="alert alert-success" role="alert">
+			<span th:text="${success}"></span>
+		</div>
+		<div th:if="${error}" class="alert alert-danger" role="alert">
+			<span th:text="${error}"></span>
+		</div>
+
+		<!-- Job Seeker Information Card and Review Form Row -->
+		<div class="row">
+			<!-- Job Seeker Information Card -->
+			<div class="col-md-4">
+				<div class="card mb-4 small-card">
+					<img th:src="@{${jobseeker.user.photo}}"
+						class="card-img-top small-img" alt="Job Seeker Image">
+					<div class="card-body">
+						<h5 class="card-title">Thông tin ứng viên</h5>
+						<p class="card-text">
+							<strong>ID Ứng Viên:</strong> <span
+								th:text="${jobseeker.jobseekerID}"></span>
+						</p>
+						<p class="card-text">
+							<strong>Tên:</strong> <span th:text="${jobseeker.user.name}"></span>
+						</p>
+						<p class="card-text">
+							<strong>Email:</strong> <span th:text="${jobseeker.user.email}"></span>
+						</p>
+						<p class="card-text">
+							<strong>Phone:</strong> <span th:text="${jobseeker.user.phone}"></span>
+						</p>
+						<p class="card-text">
+							<strong>Ngày Sinh:</strong> <span th:text="${jobseeker.birthday}"></span>
+						</p>
+						<p class="card-text">
+							<strong>Giới Tính:</strong> <span th:text="${jobseeker.gender}"></span>
+						</p>
+						<p class="card-text">
+							<strong>Kỹ Năng:</strong> <span th:text="${jobseeker.skill}"></span>
+						</p>
+						  <a th:href="'tel:' + ${jobseeker.user.phone}" class="btn btn-success contact-button">
+                            Liên hệ qua số điện thoại
+                        </a>
+					</div>
+				</div>
+			</div>
+
+			<div class="col-md-8">
+				<div class="card mb-4 small-card">
+					<div class="card-body">
+						<h5 class="card-title">Thêm Đánh Giá Mới</h5>
+						 <form th:action="@{/reviews/add}" method="post" id="reviewForm">
+                    <!-- Hidden fields -->
+                    <input type="hidden" name="reviewerId" th:value="${jobseeker.jobseekerID}" />
+                    <input type="hidden" name="jobseekerID" th:value="${jobseeker.jobseekerID}" />
+                         <input type="hidden" name="jobId" th:value="${jobId}" />
+
+                    <!-- Form fields -->
+                
+                    <div class="form-group">
+                        <label for="rating">Đánh Giá:</label>
+                        <input type="number" id="rating" name="rating" class="form-control" min="1" max="5" required />
+                    </div>
+                    <div class="form-group">
+                        <label for="comment">Nhận Xét:</label>
+                        <textarea id="comment" name="comment" class="form-control" rows="4" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Gửi Đánh Giá</button>
+                </form>
+					</div>
+				</div>
+
+				<!-- Reviews List -->
+				<div class="card small-card">
+					<div class="card-body">
+						<h5 class="card-title">Đánh giá</h5>
+						<div th:if="${reviews.isEmpty()}">
+							<p>Chưa có đánh giá nào.</p>
+						</div>
+						<div class="list-group" th:each="review : ${reviews}">
+							<div class="list-group-item">
+								<h5 class="mb-1">
+									Job: <span
+										th:text="${review.job != null ? review.job.title : 'No Job Title'}">Job
+										Title</span>
+								</h5>
+								<p class="mb-1">
+									Rating: <span th:text="${review.rating}">Rating</span>
+								</p>
+								<p class="mb-1">
+									Comment: <span th:text="${review.comment}">Comment</span>
+								</p>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,401 @@
+.product-header {
+	text-align: center;
+	margin-bottom: 20px;
+}
+
+.product-title {
+	font-size: 30px;
+	font-weight: bold;
+}
+
+.product-description {
+	font-size: 16px;
+	color: #666;
+}
+
+.product-description {
+	font-size: 16px;
+	color: #666;
+}
+
+.cart-text {
+	font-size: 16px;
+	color: #666;
+}
+
+.product-price {
+	font-size: 20px;
+	font-weight: bold;
+	color: #007bff;
+}
+
+.product-image {
+	max-width: 100%;
+	border-radius: 8px;
+	box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+	margin-bottom: 15px;
+}
+
+/* Nút thêm vào giỏ hàng */
+.btn-add-to-cart {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #007bff; /* Màu nền chính */
+    color: #ffffff; /* Màu chữ */
+    font-size: 1rem; /* Kích thước chữ */
+    padding: 10px 20px; /* Khoảng cách bên trong */
+    border: none;
+    border-radius: 50px; /* Bo góc tròn */
+    text-decoration: none; /* Xóa gạch chân */
+    transition: background-color 0.3s ease, transform 0.3s ease; /* Hiệu ứng chuyển màu và phóng to */
+}
+
+.btn-add-to-cart:hover {
+    background-color: #0056b3; /* Màu nền khi hover */
+    transform: scale(1.05); /* Phóng to khi hover */
+}
+
+.btn-add-to-cart i {
+    margin-right: 8px; /* Khoảng cách giữa biểu tượng và chữ */
+}
+
+.btn-add-to-cart:active {
+    background-color: #004494; /* Màu nền khi nhấn */
+    transform: scale(0.98); /* Nhỏ lại khi nhấn */
+}
+
+iframe {
+	max-width: 100%;
+	border: none;
+}
+/* CSS cho trang about */
+.about-page {
+	background: rgba(255, 255, 255, 0.9);
+	/* Nền trắng nhẹ với độ trong suốt */
+	padding: 40px;
+	border-radius: 8px;
+	max-width: 1200px;
+	margin: 20px auto;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Hiệu ứng bóng mờ */
+}
+
+.about-page .hero-section {
+	background: linear-gradient(135deg, #4a90e2, #50e3c2);
+	/* Gradient nền */
+	color: #fff;
+	padding: 60px 20px;
+	border-radius: 8px;
+	text-align: center;
+	margin-bottom: 40px;
+}
+
+.about-page .hero-section h1 {
+	font-size: 3em;
+	margin-bottom: 10px;
+}
+
+.about-page .hero-section p {
+	font-size: 1.5em;
+	margin-top: 0;
+}
+
+.about-page section {
+	margin-bottom: 30px;
+}
+
+.about-page section h2 {
+	font-size: 2.2em;
+	color: #4a90e2; /* Màu tiêu đề */
+	border-bottom: 3px solid #50e3c2; /* Đường gạch dưới */
+	padding-bottom: 10px;
+	margin-bottom: 20px;
+}
+
+.about-page section p, .about-page section ul {
+	font-size: 1.1em;
+	color: #333; /* Màu văn bản chính */
+}
+
+.about-page ul {
+	list-style-type: disc;
+	padding-left: 20px;
+}
+
+.about-page .team-member {
+	text-align: center;
+	margin-bottom: 20px;
+}
+
+.about-page .team-member img {
+	border-radius: 50%;
+	width: 150px;
+	height: 150px;
+	object-fit: cover;
+	border: 4px solid #4a90e2; /* Viền ảnh thành viên */
+}
+
+.about-page .team-member h4 {
+	font-size: 1.5em;
+	margin: 10px 0;
+	color: #4a90e2; /* Màu tên thành viên */
+}
+
+.about-page .team-member p {
+	color: #666; /* Màu văn bản phụ */
+}
+
+body {
+	font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+	background-color: #f4f7f6;
+	margin: 0;
+	padding: 0;
+}
+
+.main-content {
+	background: rgba(255, 255, 255, 0.8);
+	padding: 20px;
+	border-radius: 10px;
+}
+
+.main-content {
+	flex: 1;
+	/* Allow main content to expand and push footer down */
+}
+
+.navbar-brand span {
+	font-size: 24px;
+	font-weight: bold;
+	color: #007bff;
+}
+
+.navbar-brand .text-muted {
+	color: #007bff;
+}
+
+.navbar-nav .nav-link.active {
+	font-weight: bold;
+}
+
+.navbar-nav .nav-link {
+	margin-right: 15px;
+}
+
+.btn-outline-primary {
+	border-color: #007bff;
+	color: #007bff;
+}
+
+.btn-outline-primary:hover {
+	background-color: #007bff;
+	color: #fff;
+}
+
+.btn-primary {
+	background-color: #007bff;
+	border-color: #007bff;
+}
+
+.btn-primary:hover {
+	background-color: #0056b3;
+	border-color: #0056b3;
+}
+
+.dropdown-menu {
+	min-width: 150px;
+}
+
+/* Job Listings */
+.job-listing {
+	margin: 0 auto; /* Center align the job listings */
+	max-width: 1200px; /* Limit the max-width of the job listings */
+}
+
+/* Job Card */
+.job-card {
+	background-color: #ffffff;
+	border-radius: 8px;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+	overflow: hidden;
+	padding: 15px;
+	transition: transform 0.3s ease, box-shadow 0.3s ease;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	height: 100%;
+	max-width: 300px; /* Limit the width of the job card */
+	margin: 0 auto; /* Center align each job card */
+}
+
+.job-card:hover {
+	transform: translateY(-5px);
+	box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.job-image {
+	width: 100%;
+	height: 100%;
+	border-radius: 8px;
+	object-fit: cover;
+}
+
+.job-details {
+	padding: 15px 0;
+	flex: 1;
+}
+
+.job-title {
+	font-size: 18px; /* Reduced font size */
+	font-weight: bold;
+	margin-bottom: 10px;
+}
+
+.job-position, .job-company, .job-salary, .job-description {
+	font-size: 14px; /* Reduced font size */
+	margin-bottom: 10px;
+}
+
+.job-salary {
+	color: #ff5722;
+}
+
+.btn-primary {
+	background-color: #007bff;
+	border-color: #007bff;
+	border-radius: 5px;
+	font-size: 14px; /* Reduced font size */
+	padding: 8px 15px; /* Reduced padding */
+}
+
+.btn-primary:hover {
+	background-color: #0056b3;
+	border-color: #004085;
+}
+
+.intro-section {
+	background: rgba(0, 0, 0, 0.5); /* Nền mờ cho phần giới thiệu */
+	color: #fff;
+	padding: 30px;
+	border-radius: 10px;
+	margin-bottom: 30px;
+}
+
+.intro-section h2 {
+	margin-bottom: 20px;
+}
+
+.intro-section p {
+	font-size: 16px;
+	line-height: 1.5;
+}
+
+footer {
+	background-color: #f8f9fa;
+	padding: 40px 0;
+	color: #6c757d;
+	width: 100%;
+	position: relative;
+}
+
+.footer-logo {
+	font-size: 24px;
+	font-weight: bold;
+	color: #007bff;
+}
+
+.footer-logo span {
+	color: #6c757d;
+}
+
+.footer-links a {
+	color: #6c757d;
+	text-decoration: none;
+	margin: 0 10px;
+}
+
+.footer-links a:hover {
+	color: #007bff;
+}
+
+.footer-social-icons a {
+	color: #6c757d;
+	font-size: 24px;
+	margin-right: 15px;
+}
+
+.footer-social-icons a:hover {
+	color: #007bff;
+}
+
+/* Hero Section */
+.intro-section {
+	background-image:
+		url('https://images.pexels.com/photos/392018/pexels-photo-392018.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1');
+	background-size: cover;
+	background-position: center;
+	color: white;
+	padding: 120px 0;
+	text-align: center;
+}
+
+.intro-section h1 {
+	font-size: 48px;
+	font-weight: bold;
+	margin-bottom: 20px;
+}
+
+.intro-section p {
+	font-size: 24px;
+	margin-bottom: 40px;
+}
+
+/* Search Bar */
+.search-bar {
+	max-width: 800px;
+	margin: 0 auto;
+}
+
+.search-bar input {
+	border-radius: 50px 0 0 50px;
+	padding: 15px;
+	font-size: 18px;
+}
+
+.search-bar button {
+	border-radius: 0 50px 50px 0;
+	padding: 15px 30px;
+	font-size: 18px;
+	background-color: #ff5722;
+	color: white;
+	border: none;
+}
+
+/* Job Categories */
+.categories-section {
+	padding: 60px 0;
+	background-color: #f8f9fa;
+	text-align: center;
+}
+
+.categories-section h2 {
+	font-size: 36px;
+	margin-bottom: 40px;
+	font-weight: bold;
+}
+
+.categories-section .category-card {
+	background-color: white;
+	border-radius: 15px;
+	padding: 30px;
+	margin: 15px;
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.categories-section .category-card h3 {
+	font-size: 24px;
+	margin-bottom: 20px;
+}
+
+.categories-section .category-card p {
+	font-size: 16px;
+}

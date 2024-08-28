@@ -1,0 +1,385 @@
+<!--Website: wwww.codingdung.com-->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CodingDung | Profile Template</title>
+<link
+	href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
+	rel="stylesheet">
+<script
+	src="https://cdnjs.cloudflare.com/ajax/libs/alpinejs/2.8.2/alpine.js"
+	defer></script>
+
+<style>
+body {
+	background: #f5f5f5;
+	margin-top: 20px;
+}
+
+.ui-w-80 {
+	width: 80px !important;
+	height: auto;
+}
+
+.btn-default {
+	border-color: rgba(24, 28, 33, 0.1);
+	background: rgba(0, 0, 0, 0);
+	color: #4E5155;
+}
+
+label.btn {
+	margin-bottom: 0;
+}
+
+.btn-outline-primary {
+	border-color: #26B4FF;
+	background: transparent;
+	color: #26B4FF;
+}
+
+.btn {
+	cursor: pointer;
+}
+
+.text-light {
+	color: #babbbc !important;
+}
+
+.btn-facebook {
+	border-color: rgba(0, 0, 0, 0);
+	background: #3B5998;
+	color: #fff;
+}
+
+.btn-instagram {
+	border-color: rgba(0, 0, 0, 0);
+	background: #000;
+	color: #fff;
+}
+
+.card {
+	background-clip: padding-box;
+	box-shadow: 0 1px 4px rgba(24, 28, 33, 0.012);
+}
+
+.row-bordered {
+	overflow: hidden;
+}
+
+.account-settings-fileinput {
+	position: absolute;
+	visibility: hidden;
+	width: 1px;
+	height: 1px;
+	opacity: 0;
+}
+
+.account-settings-links .list-group-item.active {
+	font-weight: bold !important;
+}
+
+html:not(.dark-style) .account-settings-links .list-group-item.active {
+	background: transparent !important;
+}
+
+.account-settings-multiselect ~.select2-container {
+	width: 100% !important;
+}
+
+.light-style .account-settings-links .list-group-item {
+	padding: 0.85rem 1.5rem;
+	border-color: rgba(24, 28, 33, 0.03) !important;
+}
+
+.light-style .account-settings-links .list-group-item.active {
+	color: #4e5155 !important;
+}
+
+.material-style .account-settings-links .list-group-item {
+	padding: 0.85rem 1.5rem;
+	border-color: rgba(24, 28, 33, 0.03) !important;
+}
+
+.material-style .account-settings-links .list-group-item.active {
+	color: #4e5155 !important;
+}
+
+.dark-style .account-settings-links .list-group-item {
+	padding: 0.85rem 1.5rem;
+	border-color: rgba(255, 255, 255, 0.03) !important;
+}
+
+.dark-style .account-settings-links .list-group-item.active {
+	color: #fff !important;
+}
+
+.light-style .account-settings-links .list-group-item.active {
+	color: #4E5155 !important;
+}
+
+.light-style .account-settings-links .list-group-item {
+	padding: 0.85rem 1.5rem;
+	border-color: rgba(24, 28, 33, 0.03) !important;
+}
+</style>
+<link
+	href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css"
+	rel="stylesheet">
+</head>
+
+<body>
+	<div class="container light-style flex-grow-1 container-p-y">
+		<a class="navbar-brand" href="" th:href="@{/nguoitimviec}"> <span>R</span>|<span
+			class="text-muted">S</span> Quản lý tài khoản
+		</a>
+		<div class="card overflow-hidden">
+			<div class="row no-gutters row-bordered row-border-light">
+				<div class="col-md-3 pt-0">
+<div class="list-group list-group-flush account-settings-links">
+						<a class="list-group-item list-group-item-action active"
+							data-toggle="list" href="#account-general">Tổng quan</a> <a
+							class="list-group-item list-group-item-action" data-toggle="list"
+							href="#account-change-password">Đổi mật khẩu</a> <a
+							class="list-group-item list-group-item-action" data-toggle="list"
+							href="#account-info">Thông tin cá nhân</a> <a
+							class="list-group-item list-group-item-action" data-toggle="list"
+							href="#account-notifications">Bảo mật</a>
+					</div>
+				</div>
+				<div class="col-md-9">
+					<div class="tab-content">
+						<div class="tab-pane fade active show" id="account-general">
+							<div class="card-body media align-items-center">
+
+								<div class="media-body ml-4">
+									<!-- Form Upload Ảnh -->
+									<form action="/auth/user/uploadPhoto" method="post"
+										enctype="multipart/form-data">
+										<!-- Trường hidden để truyền userId -->
+										<input type="hidden" name="userId" th:value="${userID}" />
+
+										<!-- Ảnh profile hiển thị -->
+										<img th:src="@{/user/photo/{userId}(userId=${userID})}"
+											alt="Image Profile" class="d-block ui-w-80">
+
+										<!-- Input để chọn file ảnh -->
+										<img
+											th:src="@{/images/{photoFileName}(photoFileName=${session.ACCOUNT_SESSION.photo})}"
+											alt="Image Profile" class="d-block ui-w-80">
+
+										<!-- Nút để upload -->
+										<button class="btn btn-primary" type="submit">Upload</button>
+
+										<!-- Nút để đặt lại ảnh -->
+										<button type="button" class="btn btn-default md-btn-flat"
+											onclick="resetPhoto()">Đặt lại</button>
+									</form>
+									<!-- Nút Đặt Lại -->
+
+									<div class="text-light small mt-1">Allowed JPG, GIF or
+										PNG. Max size of 800K</div>
+								</div>
+							</div>
+							<hr class="border-light m-0">
+							<div class="card-body">
+								<div class="form-group">
+									<label class="form-label">Tài khoản</label> <input type="text"
+										class="form-control mb-1"
+										th:value="*{session.ACCOUNT_SESSION.userID}" readonly>
+								</div>
+
+								<div class="form-group">
+									<label class="form-label">E-mail</label> <input type="text"
+										class="form-control mb-1"
+										th:value="*{session.ACCOUNT_SESSION.email}" readonly>
+
+								</div>
+								<div class="form-group">
+									<label class="form-label">Số điện thoại</label> <input
+										type="text" class="form-control"
+										th:value="*{session.ACCOUNT_SESSION.phone}" readonly>
+								</div>
+							</div>
+						</div>
+
+						<form class="tab-pane fade card-body pb-2"
+							id="account-change-password" th:action="@{/auth/change-password}"
+							method="post">
+							<div style="display: none;">
+								<input type="email" name="email" id="email"
+class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+									placeholder="name@abc.com" required=""
+									th:value="${session.ACCOUNT_SESSION.email}">
+							</div>
+							<div>
+								<label for="password"
+									class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Mật
+									khẩu cũ</label> <input type="password" name="password" id="password"
+									placeholder="••••••••"
+									class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+									required="">
+							</div>
+							<div>
+								<label for="new-password"
+									class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Mật
+									khẩu mới</label> <input type="password" name="new-password"
+									id="new-password" placeholder="••••••••"
+									class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+									required="">
+							</div>
+							<div>
+								<label for="confirmPassword" class="block text-gray-700">Xác
+									Nhận Mật Khẩu:</label> <input type="password" id="confirmPassword"
+									placeholder="••••••••" name="confirmPassword"
+									class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+									required onchange="checkPassword()">
+								<div class="errors text-red-500 mt-2"></div>
+							</div>
+
+							<button type="submit" id="submit" style="background-color: green"
+								class="w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
+								Change Password</button>
+							<span class="errors" style="color: red; font-weight: bold"
+								th:text="${errors}"></span> <span class="success"
+								style="color: green; font-weight: bold" th:text="${success}"></span>
+						</form>
+
+
+						<div class="tab-pane fade" id="account-info">
+							<div class="card-body pb-2">
+								<div class="form-group">
+									<label class="form-label">Tên</label> <input type="text"
+										class="form-control"
+th:value="*{session.ACCOUNT_SESSION.name}" readonly>
+</div>
+								<div class="form-group">
+									<label class="form-label">Địa chỉ</label> <input type="text"
+										class="form-control"
+										th:value="*{session.ACCOUNT_SESSION.address}" readonly>
+								</div>
+								<div class="form-group">
+									<label class="form-label">Birthday</label> <input type="text"
+										class="form-control" value="May 3, 1995">
+								</div>
+								<div class="form-group">
+									<label class="form-label">Country</label> <select
+										class="custom-select">
+										<option>USA</option>
+										<option selected>Canada</option>
+										<option>UK</option>
+										<option>Germany</option>
+										<option>France</option>
+									</select>
+								</div>
+							</div>
+							<hr class="border-light m-0">
+							<div class="card-body pb-2">
+								<h6 class="mb-4">Contacts</h6>
+								<div class="form-group">
+									<label class="form-label">Phone</label> <input type="text"
+										class="form-control" th:value="${phone}" readonly>
+								</div>
+								<div class="form-group">
+									<label class="form-label">Website</label> <input type="text"
+										class="form-control" value>
+								</div>
+							</div>
+						</div>
+
+						<div class="tab-pane fade" id="account-notifications">
+							<div class="card-body pb-2">
+								<h6 class="mb-4">Activity</h6>
+								<div class="form-group">
+									<label class="switcher"> <input type="checkbox"
+										class="switcher-input" checked> <span
+										class="switcher-indicator"> <span class="switcher-yes"></span>
+											<span class="switcher-no"></span>
+									</span> <span class="switcher-label">Email me when someone
+											comments on my article</span>
+									</label>
+								</div>
+								<div class="form-group">
+									<label class="switcher"> <input type="checkbox"
+										class="switcher-input" checked> <span
+										class="switcher-indicator"> <span class="switcher-yes"></span>
+											<span class="switcher-no"></span>
+									</span> <span class="switcher-label">Email me when someone
+											answers on my forum thread</span>
+									</label>
+								</div>
+								<div class="form-group">
+									<label class="switcher"> <input type="checkbox"
+										class="switcher-input"> <span
+										class="switcher-indicator"> <span class="switcher-yes"></span>
+											<span class="switcher-no"></span>
+									</span> <span class="switcher-label">Email me when someone
+											follows me</span>
+									</label>
+								</div>
+							</div>
+							<hr class="border-light m-0">
+							<div class="card-body pb-2">
+								<h6 class="mb-4">Application</h6>
+								<div class="form-group">
+									<label class="switcher"> <input type="checkbox"
+										class="switcher-input" checked> <span
+										class="switcher-indicator"> <span class="switcher-yes"></span>
+											<span class="switcher-no"></span>
+</span> <span class="switcher-label">News and announcements</span>
+</label>
+								</div>
+								<div class="form-group">
+									<label class="switcher"> <input type="checkbox"
+										class="switcher-input"> <span
+										class="switcher-indicator"> <span class="switcher-yes"></span>
+											<span class="switcher-no"></span>
+									</span> <span class="switcher-label">Weekly product updates</span>
+									</label>
+								</div>
+								<div class="form-group">
+									<label class="switcher"> <input type="checkbox"
+										class="switcher-input" checked> <span
+										class="switcher-indicator"> <span class="switcher-yes"></span>
+											<span class="switcher-no"></span>
+									</span> <span class="switcher-label">Weekly blog digest</span>
+									</label>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<script data-cfasync="false"
+		src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
+	<script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
+	<script
+		src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/js/bootstrap.bundle.min.js"></script>
+	<script type="text/javascript">
+function checkPassword() {
+    const password = document.getElementById('new-password').value;
+    const confirmPassword = document.getElementById('confirmPassword').value;
+    const errors = document.getElementsByClassName('errors');
+
+    if (password !== confirmPassword) {
+        Array.from(errors).forEach(e => e.innerHTML = "Xác Nhận Mật Khẩu Sai");
+        return false;
+    } else {
+        Array.from(errors).forEach(e => e.innerHTML = "");
+        return true;
+    }
+}
+
+function resetPhoto() {
+    // Implement reset logic here
+    // For example, you can reload the page or set a default photo
+    window.location.reload(); // Reload page to show the original photo
+}
+</script>
+</body>
+
+</html>

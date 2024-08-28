@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	th:replace="~{/NguoiTimViec/index::dynamic(~{::body})}">
+<head>
+<meta charset="UTF-8">
+<title>Job Search</title>
+<link
+	href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+	rel="stylesheet">
+<script
+	src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<style>
+.job-card {
+	border: 1px solid #ddd;
+	border-radius: 5px;
+	padding: 15px;
+	margin-bottom: 20px;
+	text-align: center;
+}
+
+.job-card .logo, .job-card .image {
+	max-width: 100%;
+	height: auto;
+	margin-bottom: 10px;
+}
+
+.job-listing {
+	margin-top: 20px;
+}
+
+.search-bar {
+	margin-bottom: 20px;
+}
+
+.carousel-item {
+	position: relative;
+}
+
+.carousel-item img {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	z-index: -1;
+}
+
+.carousel-caption {
+	position: relative;
+	z-index: 1;
+}
+</style>
+</head>
+<body>
+	<main class="container">
+
+		<!-- Hero Section -->
+		<div class="intro-section text-center my-4">
+			<h1>Tìm công việc mơ ước của bạn</h1>
+			<p>Hàng ngàn cơ hội việc làm đang chờ đợi bạn</p>
+			<div class="search-bar d-flex justify-content-center">
+				<input type="text" id="searchInput" class="form-control w-50"
+					placeholder="Tìm kiếm công việc..." aria-label="Search">
+				<button class="btn btn-primary ms-2" type="button"
+					onclick="searchJobs()">Tìm kiếm</button>
+			</div>
+		</div>
+
+		<!-- Job Categories -->
+		<section class="categories-section">
+			<div class="container">
+				<h2>Danh Mục Công Việc</h2>
+				<div class="row">
+					<div class="col-md-4">
+						<div class="category-card p-3 border rounded">
+							<h3>Công Nghệ Thông Tin</h3>
+							<p>Các công việc liên quan đến IT, phát triển phần mềm, và
+								quản trị hệ thống.</p>
+						</div>
+					</div>
+					<div class="col-md-4">
+						<div class="category-card p-3 border rounded">
+							<h3>Kinh Doanh & Marketing</h3>
+							<p>Công việc liên quan đến bán hàng, tiếp thị, và quản lý
+								khách hàng.</p>
+						</div>
+					</div>
+					<div class="col-md-4">
+						<div class="category-card p-3 border rounded">
+							<h3>Kế Toán & Tài Chính</h3>
+							<p>Các vị trí liên quan đến kế toán, kiểm toán và quản lý tài
+								chính.</p>
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+
+		<!-- Search Results -->
+		<div id="searchResults" class="row job-listing">
+			<!-- Search results will be displayed here -->
+			<div id="jobListings" class="row job-listing">
+				<div th:each="job : ${jobPostings}" class="col-md-4 mb-4">
+					<div class="job-card">
+						<!-- Job Image -->
+						<img th:src="@{${job.image}}" alt="Job Image" class="job-image" />
+
+						<div class="job-details">
+							<!-- Job Title -->
+							<h3 class="job-title" th:text="${job.title}"></h3>
+							 <input type="hidden" name="jobId" th:value="${jobId}" />
+
+							<!-- Job Position -->
+							<p class="job-position" th:text="${job.position}"></p>
+
+							<!-- Company Name -->
+							<p class="job-company" th:text="${job.postedBy}"></p>
+
+							<!-- Salary -->
+							<p class="job-salary"
+								th:text="${job.salary != null ? 'Lương: ' + job.salary + ' VND' : 'Lương: Chưa xác định'}"></p>
+
+							<!-- Job Description -->
+							<p class="job-description" th:text="${job.description}"></p>
+
+							<!-- Apply Button -->
+						<a class="btn btn-primary" th:href="@{/apply(jobId=${job.jobId})}"> Xem Chi Tiết </a>
+
+
+
+
+
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+
+	</main>
+
+	<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+	<script
+		src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"></script>
+	<script
+		src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+
+	<script>
+
+
+    function searchJobs() {
+        const keyword = document.getElementById('searchInput').value;
+        fetch(`/api/jobs/search?keyword=${encodeURIComponent(keyword)}`)
+            .then(response => response.json())
+            .then(data => {
+                const resultsDiv = document.getElementById('searchResults');
+                const jobListingsDiv = document.getElementById('jobListings');
+
+                // Clear existing job listings
+                jobListingsDiv.innerHTML = '';
+
+                if (data.length > 0) {
+                    data.forEach(job => {
+                        const jobElement = document.createElement('div');
+                        jobElement.classList.add('col-md-4');
+                        jobElement.innerHTML = `
+                            <div class="job-card">
+                                <img src="${job.image}" alt="Job Image" class="image" />
+                                <div class="title">${job.title}</div>
+                                <div class="position">${job.position}</div>
+                                <div class="company">${job.postedBy}</div>
+                                <div class="salary">${job.salary != null ? 'Lương: ' + job.salary + ' VND' : 'Lương: Chưa xác định'}</div>
+                                <p class="mt-2">${job.description}</p>
+                                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#applyModal" data-job-id="${job.jobId}">Ứng Tuyển</button>
+                            </div>
+                        `;
+                        jobListingsDiv.appendChild(jobElement);
+                    });
+                } else {
+                    resultsDiv.innerHTML = '<p>Không tìm thấy công việc nào phù hợp.</p>';
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    }
+</script>
+</body>
+</html>

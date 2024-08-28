@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+
+<meta charset="UTF-8">
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<style >
+/* In đậm các liên kết trong thanh điều hướng */
+.navbar-custom .navbar-brand,
+.navbar-custom .nav-link {
+    font-weight: bold; /* Làm chữ in đậm */
+}
+
+/* Màu nền và màu chữ khi hover */
+.navbar-custom .nav-link:hover {
+    color: #007bff; /* Màu xanh biển khi hover */
+}</style>
+</head>
+<body>
+	<header th:fragment="header">
+		<nav class="navbar navbar-expand-lg navbar-light bg-light">
+			<div class="container-fluid">
+				<!-- Logo -->
+				<a class="navbar-brand" href="" th:href="@{/index}"> <span>R</span>|<span
+					class="text-muted">S</span> Nhà Tuyển Dụng
+				</a>
+				<!-- Toggle Button for Mobile View -->
+				<button class="navbar-toggler" type="button"
+					data-bs-toggle="collapse" data-bs-target="#navbarNav"
+					aria-controls="navbarNav" aria-expanded="false"
+					aria-label="Toggle navigation">
+					<span class="navbar-toggler-icon"></span>
+				</button>
+				<!-- Navigation Menu -->
+				<div class="collapse navbar-collapse" id="navbarNav">
+					<ul class="navbar-nav mx-auto">
+						<li class="nav-item"><a class="nav-link active"
+							aria-current="page" href="#" th:href="@{/index}">Trang Chủ</a></li>
+						<li class="nav-item"><a class="nav-link" href="#"
+							th:href="@{/reviews/jobseekers}">Ứng Viên</a></li>
+						<li class="nav-item"><a class="nav-link" href="#"
+							th:href="@{/about1}">About</a></li>
+						<li class="nav-item"><a class="nav-link" href="#"
+							th:href="@{/DonUngTuyen}">Đơn Ứng Tuyển</a></li>
+					</ul>
+					<!-- Dropdown menu -->
+<!-- Dropdown menu -->
+<div class="dropdown ms-auto">
+    <a href="#" 
+       class="d-block link-dark text-decoration-none dropdown-toggle" 
+       id="dropdownUser1" 
+       data-bs-toggle="dropdown" 
+       aria-expanded="false">
+        <!-- Hiển thị tên người dùng từ session với khoảng cách bên phải -->
+        <span th:text="${session.ACCOUNT_SESSION.name}" class="me-2">User Name</span>
+    </a>
+    <ul class="dropdown-menu text-small dropdown-menu-end" aria-labelledby="dropdownUser1">
+        <li><a class="dropdown-item"th:href="@{/auth/quanlytaikhoan/form}" href="/auth/quanlytaikhoan/form">Cập nhật thông tin</a></li>
+        <li><a class="dropdown-item" href="#">Nhà tuyển dụng xem hồ sơ</a></li>
+        <li><hr class="dropdown-divider" /></li>
+        <li><a class="dropdown-item" href="#">Cài đặt thông báo việc làm</a></li>
+        <li><a class="dropdown-item" th:href="@{/auth/logout}" href="/auth/logout">Đăng xuất</a></li>
+    </ul>
+</div>
+
+
+				</div>
+			</div>
+		</nav>
+	</header>
+
+</body>
+
+</html>

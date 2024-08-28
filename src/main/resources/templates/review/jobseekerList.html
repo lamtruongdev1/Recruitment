@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{index::dynamic(~{::body})}">
+<head>
+    <meta charset="UTF-8">
+    <title>Danh sách đánh giá của ứng viên</title>
+   
+      
+</head>
+<body>
+
+    <!-- Container -->
+    <div class="container mt-4">
+        <div class="row mb-4">
+            <div class="col-md-12">
+                <form class="form-inline" onsubmit="event.preventDefault(); searchJobseekers();">
+                    <input id="search-input" class="form-control mr-sm-2" type="search" placeholder="Tìm kiếm ứng viên" aria-label="Search">
+                    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Tìm kiếm</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Candidate List -->
+        <div class="row" id="jobseeker-list">
+            <div class="col-md-12" th:each="jobseeker : ${jobseekers}">
+                <div class="candidate-card">
+                    <div class="d-flex align-items-center">
+                        <img th:src="@{${jobseeker.user.photo}}" alt="Candidate Image"
+                             style="border-radius: 50%; width: 75px; height: 75px; object-fit: cover;">
+                        <div class="ml-3">
+                            <h5 th:text="${jobseeker.user.name}">Nguyễn Văn A</h5>
+                            <p><strong>Vị trí:</strong> <span th:text="${jobseeker.skill}">Lập Trình Viên</span></p>
+                            <a class="btn btn-primary" 
+                               th:href="@{/reviews/jobseekers/{jobseekerID}(jobseekerID=${jobseeker.jobseekerID})}">
+                               Xem Chi Tiết
+                            </a>
+                        </div>
+                    </div>
+                    <div class="card-content mt-3">
+                        <!-- Add any additional content here if needed -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function searchJobseekers() {
+            const skill = document.getElementById('search-input').value;
+            const response = await fetch(`/api/reviews/jobseekers/search?skill=${skill}`);
+            const jobseekers = await response.json();
+            updateJobseekerList(jobseekers);
+        }
+
+        function updateJobseekerList(jobseekers) {
+            const container = document.getElementById('jobseeker-list');
+            container.innerHTML = ''; // Clear existing content
+            jobseekers.forEach(jobseeker => {
+                const card = document.createElement('div');
+                card.className = 'candidate-card col-md-12';
+                card.innerHTML = `
+                    <div class="d-flex align-items-center">
+                        <img src="${jobseeker.user.photo}" alt="Candidate Image"
+                             style="border-radius: 50%; width: 75px; height: 75px; object-fit: cover;">
+                        <div class="ml-3">
+                            <h5>${jobseeker.user.name}</h5>
+                            <p><strong>Vị trí:</strong> ${jobseeker.skill}</p>
+                            <a class="btn btn-primary" href="/reviews/jobseekers/${jobseeker.jobseekerID}?jobId=${jobId}">Xem Chi Tiết</a>
+
+                        </div>
+                    </div>
+                    <div class="card-content mt-3"></div>
+                `;
+                container.appendChild(card);
+            });
+        }
+    </script>
+</body>
+</html>

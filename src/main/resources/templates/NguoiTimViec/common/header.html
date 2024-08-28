@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<div class="header" th:fragment="header"></div>
+<head>
+<meta charset="UTF-8">
+<title>Người tìm việc</title>
+<style >
+
+
+</style>
+</head>
+ <header>
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <div class="container-fluid">
+                <!-- Logo -->
+                <a class="navbar-brand" href="index.html">
+                    <span>R</span>|<span class="text-muted">S</span> Việc Làm
+                </a>
+                <!-- Toggle Button for Mobile View -->
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <!-- Navigation Menu -->
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav mx-auto">
+                        <li class="nav-item">
+                            <a class="nav-link active" aria-current="page" th:href="@{/nguoitimviec}">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/about}">About</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/cv}">CV Mẫu</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="contact.html">Contact</a>
+                        </li>
+                    </ul>
+                    <!-- Call to Action Buttons and Dropdown Menu -->
+                    <div class="d-flex align-items-center">
+                        <a class="btn btn-outline-primary me-2" href="cart.html" th:href="@{/cart}">
+                            <i class="bi bi-cart"></i> <!-- Cart Icon -->
+                        </a>
+                        <div class="dropdown">
+                            <a class="btn btn-primary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
+                                <span class="me-2">🔒</span> Account
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                                <li><a class="dropdown-item" th:href="@{/login}" href="login.html">Log In</a></li>
+                                <li><a class="dropdown-item" th:href="@{/auth/logout}" href="/auth/logout">Đăng xuất</a></li>
+                                  <li><a class="dropdown-item" th:href="@{/auth/quanlytaikhoan/user}" href="/auth//quanlytaikhoan/user">Cập nhật thông tin cá nhân</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
