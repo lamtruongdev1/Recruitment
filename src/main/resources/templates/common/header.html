@@ -50,8 +50,10 @@
        id="dropdownUser1" 
        data-bs-toggle="dropdown" 
        aria-expanded="false">
-        <!-- Hiển thị tên người dùng từ session với khoảng cách bên phải -->
-        <span th:text="${session.ACCOUNT_SESSION.name}" class="me-2">User Name</span>
+    <div th:if="${session.ACCOUNT_SESSION != null}">
+    <span th:text="${session.ACCOUNT_SESSION.name}"></span>
+</div>
+
     </a>
     <ul class="dropdown-menu text-small dropdown-menu-end" aria-labelledby="dropdownUser1">
         <li><a class="dropdown-item"th:href="@{/auth/quanlytaikhoan/form}" href="/auth/quanlytaikhoan/form">Cập nhật thông tin</a></li>

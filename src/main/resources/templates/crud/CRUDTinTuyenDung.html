@@ -1,250 +1,335 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" th:replace="~{index::dynamic(~{::body})}">
+<html xmlns:th="http://www.thymeleaf.org"
+	th:replace="~{index::dynamic(~{::body})}">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Danh sách Tin Đăng Tuyển</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Danh sách Tin Đăng Tuyển</title>
 
 </head>
 
 <body>
 
 
-    <div class="container-fluid mt-4">
-        <div class="row">
-            <!-- Promotion Card -->
-            <div class="col-md-12 mb-4">
-                <div class="card card-custom">
-                    <div class="card-body">
-                        <div class="hero-section">
-                            <h1 class="display-4">Chào Mừng Đến Với Nhà Tuyển Dụng</h1>
-                            <p class="lead">Tìm kiếm ứng viên chất lượng và quản lý tuyển dụng dễ dàng hơn bao giờ hết.</p>
-                            <a href="#" class="btn btn-primary btn-lg" data-bs-toggle="modal" data-bs-target="#createJobPostingModal">Đăng Tin Tuyển Dụng</a>
-                            <a href="#" th:href="@{/reviews/jobseekers}" class="btn btn-secondary btn-lg">Tìm Kiếm Ứng Viên</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
+	<div class="container-fluid mt-4">
+		<div class="row">
+			<!-- Promotion Card -->
+			<div class="col-md-12 mb-4">
+				<div class="card card-custom">
+					<div class="card-body">
+						<div class="hero-section">
+							<h1 class="display-4">Chào Mừng Đến Với Nhà Tuyển Dụng</h1>
+							<p class="lead">Tìm kiếm ứng viên chất lượng và quản lý tuyển
+								dụng dễ dàng hơn bao giờ hết.</p>
+							<a href="#" class="btn btn-primary btn-lg" data-bs-toggle="modal"
+								data-bs-target="#createJobPostingModal">Đăng Tin Tuyển Dụng</a>
+							<a href="#" th:href="@{/reviews/jobseekers}"
+								class="btn btn-secondary btn-lg">Tìm Kiếm Ứng Viên</a>
+						</div>
+					</div>
+				</div>
+			</div>
 
-            <!-- Job Post List and Edit Form in Two Columns -->
-            <div class="col-md-12">
-                <div class="card">
-                    <div class="row g-0">
-                        <!-- Job Post List Column -->
-                        <div class="col-md-6">
-                            <div class="card-body">
-                                <h5 class="card-title">Danh sách Tin đăng Tuyển</h5>
-                                <ul class="list-group">
-                                    <li class="list-group-item" th:each="jobPost : ${jobPosts}">
-                                        <!-- Basic Information -->
-                                        <div class="d-flex align-items-start">
-                                            <img th:src="@{${jobPost.image}}" alt="Job Image" class="me-3" width="150" height="150">
-                                            <div class="flex-grow-1">
-                                                <h6 th:text="${jobPost.title}">Tiêu đề tin đăng</h6>
-                                                <p><strong>Vị trí:</strong> <span th:text="${jobPost.position}">Vị trí</span></p>
-                                             <p><strong>Lương:</strong> <span th:text="${jobPost.salary} + ' VND'"></span></p>
-                                             
-                                                <button class="btn btn-info btn-view-more">Xem thêm</button>
-                                            </div>
-                                        </div>
-    
-                                        <!-- Detailed Information (Initially Hidden) -->
-                                        <div class="card-content mt-3">
-                                            <div>
-                                                <p th:text="${jobPost.description}">Mô tả</p>
-                                                <p><strong>Yêu cầu:</strong> <span th:text="${jobPost.requirement}">Yêu cầu</span></p>
-                                                <p><strong>Quyền lợi:</strong> <span th:text="${jobPost.benefits}">Quyền lợi</span></p>
-                                                  <p><strong>Đăng bởi:</strong> <span th:text="${jobPost.postedBy}">Đăng bởi</span></p>
-                                                <p>Ngày đăng: <span th:text="${jobPost.postedDate}"></span></p>
-                                                <p>Ngày hết hạn: <span th:text="${jobPost.endDate}"></span></p>
-                                            </div>
-                                            <div class="d-flex justify-content-end mt-3">
-                                                <a th:href="@{'/job-postings/edit/' + ${jobPost.jobId}}" class="btn btn-primary">Sửa</a>
-                                                <a th:href="@{/job-postings/delete/{id}(id=${jobPost.jobId})}" class="btn btn-danger">Xóa</a>
-                                            </div>
-                                        </div>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                        <!-- Edit Form Column -->
-                        <div class="col-md-6 edit-form-container">
-                            <div class="card-body">
-                                <h5>Sửa Tin Đăng Tuyển</h5>
-                                <form th:action="@{/job-postings}" method="post" enctype="multipart/form-data"
-                                    th:object="${jobPost}">
-                                    <input type="hidden" th:field="*{jobId}">
-                                    <input type="hidden" name="_method" value="PUT">
+			<!-- Job Post List and Edit Form in Two Columns -->
+			<div class="col-md-12">
+				<div class="card">
+					<div class="row g-0">
+						<!-- Job Post List Column -->
+						<div class="col-md-6">
+							<div class="card-body">
+								<h5 class="card-title">Danh sách Tin đăng Tuyển</h5>
+								<ul class="list-group">
+									<li class="list-group-item" th:each="jobPost : ${jobPosts}">
+										<!-- Basic Information -->
+										<div class="d-flex align-items-start">
+											<img th:src="@{${jobPost.image}}" alt="Job Image"
+												class="me-3" width="150" height="150">
+											<div class="flex-grow-1">
+												<h6 th:text="${jobPost.title}">Tiêu đề tin đăng</h6>
+												<p>
+													<strong>Vị trí:</strong> <span
+														th:text="${jobPost.position}">Vị trí</span>
+												</p>
+												<p>
+													<strong>Lương:</strong> <span
+														th:text="${jobPost.salary} + ' VND'"></span>
+												</p>
 
-                                    <div class="row mb-3">
-                                        <div class="col-md-6">
-                                            <label for="editTitle" class="form-label">Tiêu đề</label>
-                                            <input type="text" class="form-control" id="editTitle" name="title"
-                                                th:field="*{title}" required>
-                                            <p th:if="${#fields.hasErrors('title')}" class="form-text text-danger">Không
-                                                để trống tiêu đề</p>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <label for="editPosition" class="form-label">Vị trí</label>
-                                            <input type="text" class="form-control" id="editPosition" name="position"
-                                                th:field="*{position}" required>
-                                            <p th:if="${#fields.hasErrors('position')}" class="form-text text-danger">
-                                                Không để trống vị trí</p>
-                                        </div>
-                                    </div>
+												<button class="btn btn-info btn-view-more">Xem thêm</button>
+											</div>
+										</div> <!-- Detailed Information (Initially Hidden) -->
+										<div class="card-content mt-3">
+											<div>
+												<p th:text="${jobPost.description}">Mô tả</p>
+												<p>
+													<strong>Yêu cầu:</strong> <span
+														th:text="${jobPost.requirement}">Yêu cầu</span>
+												</p>
+												<p>
+													<strong>Quyền lợi:</strong> <span
+														th:text="${jobPost.benefits}">Quyền lợi</span>
+												</p>
+												<p>
+													<strong>Đăng bởi:</strong> <span
+														th:text="${jobPost.postedBy}">Đăng bởi</span>
+												</p>
+												<p>
+													Ngày đăng: <span th:text="${jobPost.postedDate}"></span>
+												</p>
+												<p>
+													Ngày hết hạn: <span th:text="${jobPost.endDate}"></span>
+												</p>
+												<p>
+													Tỉnh Thành: <span th:text="${jobPost.province}"></span>
+												</p>
+												<p>
+													Ngành: <span th:text="${jobPost.industry}"></span>
+												</p>
+											</div>
+											<div class="d-flex justify-content-end mt-3">
+												<a th:href="@{'/job-postings/edit/' + ${jobPost.jobId}}"
+													class="btn btn-primary">Sửa</a> <a
+													th:href="@{/job-postings/delete/{id}(id=${jobPost.jobId})}"
+													class="btn btn-danger">Xóa</a>
+											</div>
+										</div>
+									</li>
+								</ul>
+							</div>
+						</div>
+						<!-- Edit Form Column -->
+						<div class="col-md-6 edit-form-container">
+							<div class="card-body">
+								<h5>Sửa Tin Đăng Tuyển</h5>
+								<form th:action="@{/job-postings}" method="post"
+									enctype="multipart/form-data" th:object="${jobPost}">
+									<input type="hidden" th:field="*{jobId}"> <input
+										type="hidden" name="_method" value="PUT">
 
-                                    <div class="row mb-3">
-                                        <div class="col-md-6">
-                                            <label for="editSalary" class="form-label">Lương</label>
-                                            <input type="text" class="form-control" id="editSalary" name="salary"
-                                                th:field="*{salary}" required>
-                                            <p th:if="${#fields.hasErrors('salary')}" class="form-text text-danger">
-                                                Không để trống lương</p>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <label for="editPostedDate" class="form-label">Ngày đăng</label>
-                                            <input type="date" class="form-control" id="editPostedDate"
-                                                name="postedDate" th:field="*{postedDate}" required>
-                                            <p th:if="${#fields.hasErrors('postedDate')}" class="form-text text-danger">
-                                                Ngày đăng không hợp lệ</p>
-                                        </div>
-                                    </div>
+									<div class="row mb-3">
+										<div class="col-md-6">
+											<label for="editTitle" class="form-label">Tiêu đề</label> <input
+												type="text" class="form-control" id="editTitle" name="title"
+												th:field="*{title}" required>
+											<p th:if="${#fields.hasErrors('title')}"
+												class="form-text text-danger">Không để trống tiêu đề</p>
+										</div>
+										<div class="col-md-6">
+											<label for="editPosition" class="form-label">Vị trí</label> <input
+												type="text" class="form-control" id="editPosition"
+												name="position" th:field="*{position}" required>
+											<p th:if="${#fields.hasErrors('position')}"
+												class="form-text text-danger">Không để trống vị trí</p>
+										</div>
+									</div>
 
-                                    <div class="row mb-3">
-                                        <div class="col-md-6">
-                                            <label for="editEndDate" class="form-label">Ngày hết hạn</label>
-                                            <input type="date" class="form-control" id="editEndDate" name="endDate"
-                                                th:field="*{endDate}" required>
-                                            <p th:if="${#fields.hasErrors('endDate')}" class="form-text text-danger">
-                                                Ngày hết hạn không hợp lệ</p>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <label for="editImage" class="form-label">Hình ảnh</label>
-                                            <input type="text" class="form-control" id="editImage" name="image"
-                                                th:field="*{image}" th:value="${jobPost.image}" placeholder="Link ảnh">
-                                            <p th:if="${#fields.hasErrors('image')}" class="form-text text-danger">Chọn
-                                                hình ảnh nếu cần</p>
-                                        </div>
-                                    </div>
+									<div class="row mb-3">
+										<div class="col-md-6">
+											<label for="editSalary" class="form-label">Lương</label> <input
+												type="text" class="form-control" id="editSalary"
+												name="salary" th:field="*{salary}" required>
+											<p th:if="${#fields.hasErrors('salary')}"
+												class="form-text text-danger">Không để trống lương</p>
+										</div>
+										<div class="col-md-6">
+											<label for="editPostedDate" class="form-label">Ngày
+												đăng</label> <input type="date" class="form-control"
+												id="editPostedDate" name="postedDate"
+												th:field="*{postedDate}" required>
+											<p th:if="${#fields.hasErrors('postedDate')}"
+												class="form-text text-danger">Ngày đăng không hợp lệ</p>
+										</div>
+									</div>
 
-                                    <div class="mb-3">
-                                        <label for="editDescription" class="form-label">Mô tả</label>
-                                        <textarea class="form-control" id="editDescription" name="description"
-                                            th:field="*{description}" rows="4" required></textarea>
-                                        <p th:if="${#fields.hasErrors('description')}" class="form-text text-danger">
-                                            Không để trống mô tả</p>
-                                    </div>
+									<div class="row mb-3">
+										<div class="col-md-6">
+											<label for="editEndDate" class="form-label">Ngày hết
+												hạn</label> <input type="date" class="form-control" id="editEndDate"
+												name="endDate" th:field="*{endDate}" required>
+											<p th:if="${#fields.hasErrors('endDate')}"
+												class="form-text text-danger">Ngày hết hạn không hợp lệ</p>
+										</div>
+										<div class="col-md-6">
+											<label for="editImage" class="form-label">Hình ảnh</label> <input
+												type="text" class="form-control" id="editImage" name="image"
+												th:field="*{image}" th:value="${jobPost.image}"
+												placeholder="Link ảnh">
+											<p th:if="${#fields.hasErrors('image')}"
+												class="form-text text-danger">Chọn hình ảnh nếu cần</p>
+										</div>
+									</div>
+									<div class="form-group">
+										<label for="viTri">Tỉnh thành:</label> <select id="viTri"
+											name="province" class="form-control">
+											<option value="">Chọn tỉnh thành</option>
+											<th:block th:each="province : ${provinces}">
+												<option th:value="${province}" th:text="${province}"
+													th:selected="${province == jobPost.province}"></option>
+											</th:block>
+										</select>
+									</div>
 
-                                    <!-- New fields for requirements and benefits -->
-                                    <div class="row mb-3">
-                                        <div class="col-md-6">
-                                            <label for="editRequirements" class="form-label">Yêu cầu</label>
-                                            <textarea class="form-control" id="editRequirements" name="requirement"
-                                                th:field="*{requirement}" rows="4" required></textarea>
-                                            <p th:if="${#fields.hasErrors('requirement')}"
-                                                class="form-text text-danger">Không để trống yêu cầu</p>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <label for="editBenefits" class="form-label">Quyền lợi</label>
-                                            <textarea class="form-control" id="editBenefits" name="benefits"
-                                                th:field="*{benefits}" rows="4" required></textarea>
-                                            <p th:if="${#fields.hasErrors('benefits')}" class="form-text text-danger">
-                                                Không để trống quyền lợi</p>
-                                        </div>
-                                    </div>
+									<div class="form-group">
+										<label for="nganh">Ngành nghề:</label> <select id="nganh"
+											name="industry" class="form-control">
+											<option value="">Chọn ngành nghề</option>
+											<th:block th:each="industry : ${industries}">
+												<option th:value="${industry}" th:text="${industry}"
+													th:selected="${industry == jobPost.industry}"></option>
+											</th:block>
+										</select>
+									</div>
 
-                                    <div class="d-flex justify-content-end">
-                                        <button th:formaction="@{|/job-postings/update/*{jobId}|}"
-                                            class="btn btn-primary">Cập Nhật</button>
-                                        <button type="button" class="btn btn-secondary ms-2"
-                                            data-bs-dismiss="modal">Hủy</button>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+									<div class="mb-3">
+										<label for="editDescription" class="form-label">Mô tả</label>
+										<textarea class="form-control" id="editDescription"
+											name="description" th:field="*{description}" rows="4"
+											required></textarea>
+										<p th:if="${#fields.hasErrors('description')}"
+											class="form-text text-danger">Không để trống mô tả</p>
+									</div>
+
+									<!-- New fields for requirements and benefits -->
+									<div class="row mb-3">
+										<div class="col-md-6">
+											<label for="editRequirements" class="form-label">Yêu
+												cầu</label>
+											<textarea class="form-control" id="editRequirements"
+												name="requirement" th:field="*{requirement}" rows="4"
+												required></textarea>
+											<p th:if="${#fields.hasErrors('requirement')}"
+												class="form-text text-danger">Không để trống yêu cầu</p>
+										</div>
+										<div class="col-md-6">
+											<label for="editBenefits" class="form-label">Quyền
+												lợi</label>
+											<textarea class="form-control" id="editBenefits"
+												name="benefits" th:field="*{benefits}" rows="4" required></textarea>
+											<p th:if="${#fields.hasErrors('benefits')}"
+												class="form-text text-danger">Không để trống quyền lợi</p>
+										</div>
+
+									</div>
+
+									<div class="d-flex justify-content-end">
+										<button th:formaction="@{|/job-postings/update/*{jobId}|}"
+											class="btn btn-primary">Cập Nhật</button>
+										<button type="button" class="btn btn-secondary ms-2"
+											data-bs-dismiss="modal">Hủy</button>
+									</div>
+								</form>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
 
 
 
 
-        <!-- Create Job Posting Modal (if still needed) -->
-        <div class="modal fade" id="createJobPostingModal" tabindex="-1" aria-labelledby="createJobPostingModalLabel"
-            aria-hidden="true">
-            <div class="modal-dialog modal-lg">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="createJobPostingModalLabel">Tạo Tin Đăng Tuyển</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <!-- Create Job Posting Form -->
-                        <form th:action="@{/job-postings/create}" method="post" enctype="multipart/form-data">
-                            <div class="row mb-3">
-                                <div class="col-md-6">
-                                    <label for="title" class="form-label">Tiêu đề</label>
-                                    <input type="text" class="form-control" id="title" name="title" required>
-                                </div>
-                                <div class="col-md-6">
-                                    <label for="position" class="form-label">Vị trí</label>
-                                    <input type="text" class="form-control" id="position" name="position" required>
-                                </div>
-                            </div>
+		<!-- Create Job Posting Modal (if still needed) -->
+		<div class="modal fade" id="createJobPostingModal" tabindex="-1"
+			aria-labelledby="createJobPostingModalLabel" aria-hidden="true">
+			<div class="modal-dialog modal-lg">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="createJobPostingModalLabel">Tạo
+							Tin Đăng Tuyển</h5>
+						<button type="button" class="btn-close" data-bs-dismiss="modal"
+							aria-label="Close"></button>
+					</div>
+					<div class="modal-body">
+						<!-- Create Job Posting Form -->
+						<form th:action="@{/job-postings/create}" method="post"
+						enctype="multipart/form-data">
+							<div class="row mb-3">
+								<div class="col-md-6">
+									<label for="title" class="form-label">Tiêu đề</label> <input
+										type="text" class="form-control" id="title" name="title"
+										required>
+								</div>
+								<div class="col-md-6">
+									<label for="position" class="form-label">Vị trí</label> <input
+										type="text" class="form-control" id="position" name="position"
+										required>
+								</div>
+							</div>
 
-                            <div class="row mb-3">
-                                <div class="col-md-6">
-                                    <label for="salary" class="form-label">Lương</label>
-                                    <input type="text" class="form-control" id="salary" name="salary" required>
-                                </div>
-                                <div class="col-md-6">
-                                    <label for="postedDate" class="form-label">Ngày đăng</label>
-                                    <input type="date" class="form-control" id="postedDate" name="postedDate" required>
-                                </div>
-                            </div>
+							<div class="row mb-3">
+								<div class="col-md-6">
+									<label for="salary" class="form-label">Lương</label> <input
+										type="text" class="form-control" id="salary" name="salary"
+										required>
+								</div>
+								<div class="col-md-6">
+									<label for="postedDate" class="form-label">Ngày đăng</label> <input
+										type="date" class="form-control" id="postedDate"
+										name="postedDate" required>
+								</div>
+							</div>
 
-                            <div class="row mb-3">
-                                <div class="col-md-6">
-                                    <label for="endDate" class="form-label">Ngày hết hạn</label>
-                                    <input type="date" class="form-control" id="endDate" name="endDate" required>
-                                </div>
-                                <div class="col-md-6">
-                                    <label for="editImage" class="form-label">Hình ảnh</label>
-                                    <input type="text" class="form-control" id="editImage" name="image">
-                                </div>
-                            </div>
+							<div class="row mb-3">
+								<div class="col-md-6">
+									<label for="endDate" class="form-label">Ngày hết hạn</label> <input
+										type="date" class="form-control" id="endDate" name="endDate"
+										required>
+								</div>
+								<div class="col-md-6">
+									<label for="editImage" class="form-label">Hình ảnh</label> <input
+										type="text" class="form-control" id="editImage" name="image">
+								</div>
 
-                            <div class="mb-3">
-                                <label for="description" class="form-label">Mô tả</label>
-                                <textarea class="form-control" id="description" name="description" rows="2"
-                                    required></textarea>
-                            </div>
+							</div>
 
-                            <div class="mb-3">
-                                <label for="requirement" class="form-label">Yêu cầu</label>
-                                <textarea class="form-control" id="requirement" name="requirement" rows="2"
-                                    required></textarea>
-                            </div>
+							<div class="mb-3">
+								<label for="description" class="form-label">Mô tả</label>
+								<textarea class="form-control" id="description"
+									name="description" rows="2" required></textarea>
+							</div>
 
-                            <div class="mb-3">
-                                <label for="benefits" class="form-label">Quyền lợi</label>
-                                <textarea class="form-control" id="benefits" name="benefits" rows="2"
-                                    required></textarea>
-                            </div>
-                                 <div class="mb-3">
-                                <label for="postedBy" class="form-label">Đăng Bởi</label>
-                                <textarea class="form-control" id="postedBy" name="postedBy" rows="2"
-                                    required></textarea>
-                            </div>
+							<div class="mb-3">
+								<label for="requirement" class="form-label">Yêu cầu</label>
+								<textarea class="form-control" id="requirement"
+									name="requirement" rows="2" required></textarea>
+							</div>
 
-                            <button type="submit" class="btn btn-primary">Tạo</button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
+							<div class="mb-3">
+								<label for="benefits" class="form-label">Quyền lợi</label>
+								<textarea class="form-control" id="benefits" name="benefits"
+									rows="2" required></textarea>
+							</div>
+							<div class="mb-3">
+								<label for="viTri">Tỉnh thành:</label> <select name="province"
+									id="viTri">
+									<option th:each="province : ${provinces}"
+										th:value="${province}" th:text="${province}"></option>
+								</select>
+							</div>
+
+
+							<div class="mb-3">
+								<label for="industry">Ngành nghề:</label> <select id="industry"
+									name="industry" class="form-select">
+									<option value="" disabled selected>Chọn ngành nghề</option>
+									<option th:each="industry : ${industries}"
+										th:value="${industry}" th:text="${industry}"></option>
+								</select>
+							</div>
+
+							<div class="mb-3">
+								<label for="postedBy" class="form-label">Đăng Bởi</label>
+								<textarea class="form-control" id="postedBy" name="postedBy"
+									rows="2" required></textarea>
+							</div>
+
+							<button type="submit" class="btn btn-primary">Tạo</button>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
 </body>
 
 </html>

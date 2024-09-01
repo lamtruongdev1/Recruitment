@@ -60,13 +60,12 @@ public class SecurityConfig {
 				).authorizeHttpRequests(auth -> {
 
 					auth.requestMatchers("/resources/**", "/static/**", "/templates/**", "/templates/NguoiTimViec/**",
-							"/static/uploads/**").permitAll();
+							"/static/uploads/**","/admin/cv/**").permitAll();
 					auth.requestMatchers("/auth/**", "/index").permitAll();
 					auth.requestMatchers("/admin/**").hasAuthority(RoleEnum.ADMIN.name());
 					auth.requestMatchers("/api/**").permitAll();
 					auth.requestMatchers("/api/files/**", "/api/reviews", "/api/reviews/add", "/public/**",
-							"/api/files/cv/**", "/api/cart/**", "/api/cart").permitAll();
-
+							"/api/files/cv/**", "/api/cart/**", "/api/cart","/admin/cv/upload","/admin/cv/delete/**","/api/provinces/**","/job-postings/create").permitAll();
 					auth.anyRequest().authenticated();
 				})
 				.formLogin(login -> login.loginPage("/auth/login/form").loginProcessingUrl("/auth/login")

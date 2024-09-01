@@ -53,4 +53,11 @@ public class DangViecLamRestController {
         List<TinTuyenDung> jobPostings = tinTuyenDungRepository.findAll();
         return ResponseEntity.ok(jobPostings);
     }
+
+    // Lấy danh sách ngành nghề
+    @GetMapping("/industries")
+    public ResponseEntity<List<String>> getAllIndustries() {
+        List<String> industries = List.of("Công nghệ thông tin", "Tài chính", "Y tế", "Giáo dục", "Xây dựng");
+        return ResponseEntity.ok(industries);
+    }
 }

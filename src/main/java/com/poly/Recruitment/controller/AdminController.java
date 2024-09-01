@@ -13,6 +13,13 @@ public class AdminController {
 
     @GetMapping("/dashboard")
     public String dashboard() {
-        return "admin/dashboard";
+        return "admin/ThongKe";
     }
+ 
+    @GetMapping("/upload")
+    public String CVMau() {
+        return "admin/CV-Mau/upload-form";
+    }
+ 
 }
+
