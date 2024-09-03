@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{/admin/dashboard::dynamic(~{::body})}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Statistics</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Chart.js for charts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Custom CSS -->
+    <style>
+   
+    </style>
+</head>
+<body>
+
+
+
+      <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="#">Dashboard</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Profile</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Notifications</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        <div class="container mt-4">
+            <!-- Statistics Cards -->
+            <div class="row">
+               <div class="col-md-3">
+                <div class="card text-white bg-primary mb-3">
+                    <div class="card-header">Tài khoản</div>
+                    <div class="card-body">
+                        <h5 class="card-title" id="totalUsers">Loading...</h5>
+                        <p class="card-text">Tổng số người đã đăng ký.</p>
+                    </div>
+                </div>
+            </div>
+                <div class="col-md-3">
+                    <div class="card text-white bg-success mb-3">
+                        <div class="card-header">CVs</div>
+                        <div class="card-body">
+                            <h5 class="card-title">567</h5>
+                            <p class="card-text">Total CVs uploaded.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card text-white bg-warning mb-3">
+                        <div class="card-header">Jobs</div>
+                        <div class="card-body">
+                            <h5 class="card-title">345</h5>
+                            <p class="card-text">Total job postings.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card text-white bg-danger mb-3">
+                        <div class="card-header">Reviews</div>
+                        <div class="card-body">
+                            <h5 class="card-title">89</h5>
+                            <p class="card-text">Pending reviews.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chart -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            Statistics Chart
+                        </div>
+                        <div class="card-body">
+                            <canvas id="statsChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Chart.js Script -->
+   <script>
+        // Function to fetch total users from API
+        async function fetchTotalUsers() {
+            try {
+                const response = await fetch('/admin/cv/total');
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                const totalUsers = await response.json();
+                document.getElementById('totalUsers').innerText = totalUsers.toLocaleString(); // Format number with commas
+            } catch (error) {
+                console.error('Error fetching total users:', error);
+                document.getElementById('totalUsers').innerText = 'Error fetching data';
+            }
+        }
+
+        // Call the function to fetch data when the page loads
+        window.onload = fetchTotalUsers;
+    </script>
+</body>
+</html>

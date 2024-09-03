@@ -3,7 +3,6 @@ package com.poly.Recruitment.entity;
 import java.time.LocalDate;
 import java.util.List;
 
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.*;
@@ -52,9 +51,19 @@ public class TinTuyenDung {
 
     @Column(name = "salary")
     private Double salary;
+    
+    
+    @Column(name = "status")
+    private String status;
+
+    @Column(name = "province", columnDefinition = "nvarchar(max)")
+    private String province;
+
+
+    @Column(name = "industry", columnDefinition = "nvarchar(max)")
+    private String industry;  
 
     @OneToMany(mappedBy = "job")
     @JsonIgnore
     private List<Review> reviews;
-    
- }
+}

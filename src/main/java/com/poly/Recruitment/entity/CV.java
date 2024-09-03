@@ -31,7 +31,18 @@ public class CV {
 
     @Column(columnDefinition = "NVARCHAR(255)")
     private String fileURL;
-    
-    @ManyToMany(mappedBy = "cvs")
-    private List<Cart> carts; //
+
+    @ManyToMany(mappedBy = "cvs", cascade = CascadeType.ALL)
+    private List<Cart> carts;
+
+
+    @PreRemove
+    private void removeCarts() {
+        if (carts != null) {
+            for (Cart cart : carts) {
+                cart.getCvs().remove(this);
+            }
+        }
+    }
 }
+

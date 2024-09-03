@@ -37,6 +37,16 @@ public class DangViecLamService {
 
         return tinTuyenDungRepository.save(tinTuyenDung);
     }
+    
+    
+    
+    public TinTuyenDung findById(Long id) {
+        return tinTuyenDungRepository.findById(id).orElse(null);
+    }
+
+    public void save(TinTuyenDung tinTuyenDung) {
+        tinTuyenDungRepository.save(tinTuyenDung);
+    }
 
   
     public void deleteJobPosting(Long id) {
@@ -58,4 +68,12 @@ public class DangViecLamService {
         return tinTuyenDungRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("JobPosting", "id", id));
     }
+    public void approveJobPosting(Long id) {
+        tinTuyenDungRepository.updateStatus(id, "APPROVED");
+    }
+
+    public void rejectJobPosting(Long id) {
+        tinTuyenDungRepository.updateStatus(id, "REJECTED");
+    }
+
 }
