@@ -49,10 +49,17 @@ public class DangViecLamRestController {
     }
 
     @GetMapping
-    public ResponseEntity<List<TinTuyenDung>> getAllJobPostings() {
+    public ResponseEntity<List<TinTuyenDung>> getAllJobPostApproved() {
+        List<TinTuyenDung> jobPostings = tinTuyenDungRepository.findAllApprovePost();
+        return ResponseEntity.ok(jobPostings);
+    }
+    
+    @GetMapping("/getALL")
+    public ResponseEntity<List<TinTuyenDung>> getAllJobPosting() {
         List<TinTuyenDung> jobPostings = tinTuyenDungRepository.findAll();
         return ResponseEntity.ok(jobPostings);
     }
+
 
     // Lấy danh sách ngành nghề
     @GetMapping("/industries")

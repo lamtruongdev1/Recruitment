@@ -61,9 +61,10 @@ public class SecurityConfig {
 
 					auth.requestMatchers("/resources/**", "/static/**", "/templates/**", "/templates/NguoiTimViec/**",
 							"/static/uploads/**","/admin/cv/**").permitAll();
-					auth.requestMatchers("/auth/**", "/index").permitAll();
+					auth.requestMatchers("/auth/**").permitAll();
 					auth.requestMatchers("/admin/**").hasAuthority(RoleEnum.ADMIN.name());
 					auth.requestMatchers("/api/**").permitAll();
+					auth.requestMatchers("/index").authenticated();
 					auth.requestMatchers("/api/files/**", "/api/reviews", "/api/reviews/add", "/public/**",
 							"/api/files/cv/**", "/api/cart/**", "/api/cart","/admin/cv/upload","/admin/cv/delete/**","/api/provinces/**","/job-postings/create").permitAll();
 					auth.anyRequest().authenticated();

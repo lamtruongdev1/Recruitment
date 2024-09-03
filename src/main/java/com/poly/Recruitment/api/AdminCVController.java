@@ -8,6 +8,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.poly.Recruitment.entity.CV;
 import com.poly.Recruitment.repository.CVDAO;
+import com.poly.Recruitment.repository.UserDAO;
 import com.poly.Recruitment.service.CVService;
 
 import java.io.IOException;
@@ -23,6 +24,15 @@ public class AdminCVController {
     private CVService cvService;
     @Autowired
     private CVDAO cvRepository;
+    
+    @Autowired
+    private UserDAO userDAO;
+    
+    @GetMapping("/total")
+    public ResponseEntity<Long> getTotalUsers() {
+        long totalUsers = userDAO.getTotalUsers(); // Lấy tổng số người dùng từ service
+        return ResponseEntity.ok(totalUsers);
+    }
 
     @PostMapping("/upload")
     public ResponseEntity<String> uploadCV(@RequestParam("file") MultipartFile file,

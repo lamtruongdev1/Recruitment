@@ -51,6 +51,10 @@ public class TinTuyenDung {
 
     @Column(name = "salary")
     private Double salary;
+    
+    
+    @Column(name = "status")
+    private String status;
 
     @Column(name = "province", columnDefinition = "nvarchar(max)")
     private String province;

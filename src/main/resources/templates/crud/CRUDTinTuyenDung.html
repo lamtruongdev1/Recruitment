@@ -71,8 +71,8 @@
 														th:text="${jobPost.benefits}">Quyền lợi</span>
 												</p>
 												<p>
-													<strong>Đăng bởi:</strong> <span
-														th:text="${jobPost.postedBy}">Đăng bởi</span>
+													<strong>Đăng bởi:</strong> <span th:text="${jobPost.postedBy}">Đăng
+														bởi</span>
 												</p>
 												<p>
 													Ngày đăng: <span th:text="${jobPost.postedDate}"></span>
@@ -98,12 +98,11 @@
 								</ul>
 							</div>
 						</div>
-						<!-- Edit Form Column -->
 						<div class="col-md-6 edit-form-container">
 							<div class="card-body">
 								<h5>Sửa Tin Đăng Tuyển</h5>
-								<form th:action="@{/job-postings}" method="post"
-									enctype="multipart/form-data" th:object="${jobPost}">
+								<form method="post" enctype="multipart/form-data"
+									th:object="${jobPost}">
 									<input type="hidden" th:field="*{jobId}"> <input
 										type="hidden" name="_method" value="PUT">
 
@@ -152,13 +151,14 @@
 										</div>
 										<div class="col-md-6">
 											<label for="editImage" class="form-label">Hình ảnh</label> <input
-												type="text" class="form-control" id="editImage" name="image"
-												th:field="*{image}" th:value="${jobPost.image}"
-												placeholder="Link ảnh">
+												type="file" class="form-control" id="editImage" name="image"
+												accept="image/*"> <img th:src="${jobPost.image}"
+												width="200px" height="200px" alt="Image Preview" />
 											<p th:if="${#fields.hasErrors('image')}"
 												class="form-text text-danger">Chọn hình ảnh nếu cần</p>
 										</div>
 									</div>
+
 									<div class="form-group">
 										<label for="viTri">Tỉnh thành:</label> <select id="viTri"
 											name="province" class="form-control">
@@ -209,7 +209,10 @@
 											<p th:if="${#fields.hasErrors('benefits')}"
 												class="form-text text-danger">Không để trống quyền lợi</p>
 										</div>
-
+									</div>
+									<div class="mb-3">
+										<label for="" class="form-label">Đăng Bởi</label>
+										<textarea class="form-control" id="" name="postedBy" rows="2" required></textarea>
 									</div>
 
 									<div class="d-flex justify-content-end">
@@ -221,13 +224,11 @@
 								</form>
 							</div>
 						</div>
+
 					</div>
 				</div>
 			</div>
 		</div>
-
-
-
 
 		<!-- Create Job Posting Modal (if still needed) -->
 		<div class="modal fade" id="createJobPostingModal" tabindex="-1"
@@ -243,7 +244,7 @@
 					<div class="modal-body">
 						<!-- Create Job Posting Form -->
 						<form th:action="@{/job-postings/create}" method="post"
-						enctype="multipart/form-data">
+							enctype="multipart/form-data">
 							<div class="row mb-3">
 								<div class="col-md-6">
 									<label for="title" class="form-label">Tiêu đề</label> <input
@@ -277,10 +278,9 @@
 										required>
 								</div>
 								<div class="col-md-6">
-									<label for="editImage" class="form-label">Hình ảnh</label> <input
-										type="text" class="form-control" id="editImage" name="image">
+									<label for="imageFile" class="form-label">Hình ảnh</label> <input
+										type="file" class="form-control" id="imageFile" name="image">
 								</div>
-
 							</div>
 
 							<div class="mb-3">
@@ -300,14 +300,14 @@
 								<textarea class="form-control" id="benefits" name="benefits"
 									rows="2" required></textarea>
 							</div>
+
 							<div class="mb-3">
-								<label for="viTri">Tỉnh thành:</label> <select name="province"
-									id="viTri">
+								<label for="viTri">Tỉnh thành:</label> <select id="viTri"
+									name="province" class="form-select">
 									<option th:each="province : ${provinces}"
 										th:value="${province}" th:text="${province}"></option>
 								</select>
 							</div>
-
 
 							<div class="mb-3">
 								<label for="industry">Ngành nghề:</label> <select id="industry"
@@ -319,13 +319,13 @@
 							</div>
 
 							<div class="mb-3">
-								<label for="postedBy" class="form-label">Đăng Bởi</label>
-								<textarea class="form-control" id="postedBy" name="postedBy"
-									rows="2" required></textarea>
+								<label for="" class="form-label">Đăng Bởi</label>
+								<textarea class="form-control" id="" name="postedBy" rows="2" required></textarea>
 							</div>
 
 							<button type="submit" class="btn btn-primary">Tạo</button>
 						</form>
+
 					</div>
 				</div>
 			</div>

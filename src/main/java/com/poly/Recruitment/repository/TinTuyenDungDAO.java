@@ -7,6 +7,7 @@ import javax.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.poly.Recruitment.entity.TinTuyenDung;
@@ -23,4 +24,11 @@ public interface TinTuyenDungDAO extends JpaRepository<TinTuyenDung, Long> {
     List<TinTuyenDung> searchJobsByTitle(String keyword);
 
     TinTuyenDung findByTitle(String title);
+    
+    @Query(value = "SELECT * FROM tin_tuyen_dung where status = 'APPROVED'", nativeQuery = true)
+    List<TinTuyenDung> findAllApprovePost();  
+    
+    @Modifying
+    @Query(nativeQuery = true, value = "UPDATE tin_tuyen_dung SET status = :status WHERE job_id = :jobId")
+    void updateStatus(@Param("jobId") Long jobId, @Param("status") String status);
 }

@@ -102,88 +102,52 @@
 </head>
 <body>
 	<!-- Sidebar -->
-    <!-- Sidebar -->
-    <div class="sidebar">
-        <h4 class="text-white text-center">Admin Panel</h4>
-        <a href="#dashboard"  th:href="@{/admin/postmanager}"><span class="sidebar-icon">📊</span> Quản lý bài đăng tuyển</a>
-        <a href="#users"><span class="sidebar-icon">👥</span> Users</a>
-        <a th:href="@{/admin/upload}"><span class="sidebar-icon">📂</span> Quản lý CV</a>
-        <a href="#settings"><span class="sidebar-icon">⚙️</span> Settings</a>
-        <a th:href="@{/auth/logout}" href="/auth/logout"><span class="sidebar-icon">🚪</span> Đăng xuất</a>
-    </div>
-
+	<div class="sidebar">
+		<h4 class="text-white text-center">Admin Panel</h4>
+		<a href="#dashboard" th:href="@{/admin/postmanager}"><span class="sidebar-icon">📊</span> Quản lý
+			bài đăng tuyển</a>  <a href="#users" ><span class="sidebar-icon">👥</span>
+			Users</a> <a th:href="@{/admin/upload}"><span class="sidebar-icon">📂</span>
+			Quản lý CV</a> <a href="#settings"><span class="sidebar-icon">⚙️</span>
+			Settings</a> <a th:href="@{/auth/logout}" href="/auth/logout"><span
+			class="sidebar-icon">🚪</span> Đăng xuất</a>
+	</div>
 
 
 	<!-- Main Content -->
 	<main class="col-md-9 ms-sm-auto col-lg-10 content">
-		<div class="container mt-5">
-			<h1 class="text-center mb-4">Quản lý CV Mẫu</h1>
-
-			<!-- Tabs Navigation -->
-			<ul class="nav nav-tabs" id="myTab" role="tablist">
-				<li class="nav-item" role="presentation"><a
-					class="nav-link active" id="upload-tab" data-bs-toggle="tab"
-					href="#upload" role="tab" aria-controls="upload"
-					aria-selected="true">Thêm CV</a></li>
-				<li class="nav-item" role="presentation"><a class="nav-link"
-					id="table-tab" data-bs-toggle="tab" href="#table" role="tab"
-					aria-controls="table" aria-selected="false">Bảng</a></li>
-			</ul>
-
-			<!-- Tabs Content -->
-			<div class="tab-content mt-3" id="myTabContent">
-				<!-- Add CV Tab -->
-				<div class="tab-pane fade show active" id="upload" role="tabpanel"
-					aria-labelledby="upload-tab">
-					<form id="uploadForm" enctype="multipart/form-data">
-						<div class="mb-3">
-							<label for="file" class="form-label">File</label> <input
-								type="file" id="file" name="file" class="form-control" required>
-						</div>
-						<div class="mb-3">
-							<label for="name" class="form-label">Name</label> <input
-								type="text" id="name" name="name" class="form-control" required>
-						</div>
-						<div class="mb-3">
-							<label for="description" class="form-label">Description</label>
-							<textarea id="description" name="description"
-								class="form-control" rows="4" required></textarea>
-						</div>
-						<div class="mb-3">
-							<label for="price" class="form-label">Price</label> <input
-								type="number" id="price" name="price" class="form-control"
-								step="0.01" required>
-						</div>
-						<button type="submit" class="btn btn-primary">Upload</button>
-					</form>
-					<!-- Message display -->
-					<div id="message" class="mt-3"></div>
-				</div>
-
-				<!-- CV Table Tab -->
-				<div class="tab-pane fade" id="table" role="tabpanel"
-					aria-labelledby="table-tab">
-					<table class="table table-striped mt-3">
-						<thead>
-							<tr>
-								<th>#</th>
-								<th>Name</th>
-								<th>Description</th>
-								<th>Price</th>
-								<th>Actions</th>
-							</tr>
-						</thead>
-						<tbody id="cvTableBody">
-							<!-- Data will be dynamically inserted here -->
-
-						</tbody>
-					</table>
-				</div>
-			</div>
-		</div>
+	 <h2>Pending Job Postings</h2>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Title</th>
+                    <th>Position</th>
+                    <th>Posted Date</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="post : ${posts}">
+                    <td th:text="${post.jobId}"></td>
+                    <td th:text="${post.title}"></td>
+                    <td th:text="${post.position}"></td>
+                    <td th:text="${post.postedDate}"></td>
+                    <td th:text="${post.status}"></td>
+                    <td>
+                        <form th:action="@{|/admin/approve-job-posting/${post.jobId}|}" method="post" style="display:inline-block;">
+                            <button type="submit" class="btn btn-success">Approve</button>
+                        </form>
+                        <form th:action="@{|/admin/reject-job-posting/${post.jobId}|}" method="post" style="display:inline-block;">
+                            <button type="submit" class="btn btn-danger">Reject</button>
+                        </form>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 	</main>
-	</div>
-	</div>
+	
 
 	<!-- Footer -->
 	<div class="footer">

@@ -1,5 +1,6 @@
 package com.poly.Recruitment.Nhatuyendung;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -104,39 +105,126 @@ public class JobController {
 		}
 	}
 
-    @PostMapping("/job-postings/create")
-    public String createJobPosting(@ModelAttribute TinTuyenDung tinTuyenDung) {
-        try {
-            restTemplate.postForEntity("http://localhost:8080/api/tin-tuyen-dung", tinTuyenDung, TinTuyenDung.class);
-        } catch (Exception e) {
-            System.err.println("Error creating job posting: " + e.getMessage());
-            return "error";
-        }
-        return "redirect:/index";
-    }
-    
-    @PostMapping("/job-postings/update/{id}")
-    public String updateJobPosting(@PathVariable("id") Long id, @ModelAttribute TinTuyenDung tinTuyenDung) {
-        try {
-            tinTuyenDung.setJobId(id);  // Ensure the ID is set in the request body
-            ResponseEntity<TinTuyenDung> response = restTemplate.exchange(
-                "http://localhost:8080/api/tin-tuyen-dung/" + id,
-                HttpMethod.PUT,
-                new HttpEntity<>(tinTuyenDung),
-                TinTuyenDung.class
-            );
-            if (response.getStatusCode() == HttpStatus.OK) {
-                return "redirect:/index";
-            } else {
-                System.err.println("Error updating job posting: " + response.getStatusCode());
-                return "error";
-            }
-        } catch (Exception e) {
-            System.err.println("Error updating job posting: " + e.getMessage());
-            return "error";
-        }
-    }
+	@PostMapping("/job-postings/create")
+	public String createJobPosting(
+	        @RequestParam(name = "title") String title,
+	        @RequestParam(name = "description") String description,
+	        @RequestParam(name = "position") String position,
+	        @RequestParam(name = "requirement") String requirement,
+	        @RequestParam(name = "benefits") String benefits,
+	        @RequestParam(name = "postedDate") LocalDate postedDate,
+	        @RequestParam(name = "endDate") LocalDate endDate,
+	        @RequestParam(name = "postedBy") String postedBy,
+	        @RequestParam(name = "image", required = false) MultipartFile image,
+	        @RequestParam(name = "salary") Double salary,
+	        @RequestParam(name = "province") String province,
+	        @RequestParam(name = "industry") String industry) {
+	    
+	    TinTuyenDung jobPost = new TinTuyenDung();
+	    
+	    // Setting values to jobPost
+	    jobPost.setTitle(title);
+	    jobPost.setDescription(description);
+	    jobPost.setPosition(position);
+	    jobPost.setRequirement(requirement);
+	    jobPost.setBenefits(benefits);
+	    jobPost.setPostedDate(postedDate);
+	    jobPost.setEndDate(endDate);
+	    jobPost.setPostedBy(postedBy);
+	    jobPost.setSalary(salary);
+	    jobPost.setProvince(province);
+	    jobPost.setIndustry(industry);
 
+	    // Handle file upload
+	    if (image != null && !image.isEmpty()) {
+	        try {
+	            String uploadDir = "images/";
+	            File uploadDirFile = new File(uploadDir);
+	            if (!uploadDirFile.exists()) {
+	                uploadDirFile.mkdirs();
+	            }
+	            String originalFilename = image.getOriginalFilename();
+	            Path filePath = Paths.get(uploadDir, originalFilename);
+	            Files.write(filePath, image.getBytes());
+	            jobPost.setImage(filePath.toString());
+	        } catch (IOException e) {
+	            System.err.println("Error saving image file: " + e.getMessage());
+	            return "error";
+	        }
+	    }
+
+	    try {
+	        tinTuyenDungDAO.save(jobPost);
+	    } catch (Exception e) {
+	        System.err.println("Error creating job posting: " + e.getMessage());
+	        return "error";
+	    }
+
+	    return "redirect:/index";
+	}
+
+
+	@PostMapping("/job-postings/update/{id}")
+	public String updateJobPosting(
+	        @PathVariable("id") Long id,
+	        @RequestParam(name = "title") String title,
+	        @RequestParam(name = "description") String description,
+	        @RequestParam(name = "position") String position,
+	        @RequestParam(name = "requirement") String requirement,
+	        @RequestParam(name = "benefits") String benefits,
+	        @RequestParam(name = "postedDate") LocalDate postedDate,
+	        @RequestParam(name = "endDate") LocalDate endDate,
+	        @RequestParam(name = "postedBy") String postedBy,
+	        @RequestParam(name = "image", required = false) MultipartFile image,
+	        @RequestParam(name = "salary") Double salary,
+	        @RequestParam(name = "province") String province,
+	        @RequestParam(name = "industry") String industry) {
+	    
+	    // Retrieve the existing job post by ID
+	    TinTuyenDung jobPost = tinTuyenDungDAO.findById(id).orElseThrow(() -> new RuntimeException("Job post not found"));
+
+	    // Set the updated values to the jobPost
+	    jobPost.setTitle(title);
+	    jobPost.setDescription(description);
+	    jobPost.setPosition(position);
+	    jobPost.setRequirement(requirement);
+	    jobPost.setBenefits(benefits);
+	    jobPost.setPostedDate(postedDate);
+	    jobPost.setEndDate(endDate);
+	    jobPost.setPostedBy(postedBy);
+	    jobPost.setSalary(salary);
+	    jobPost.setProvince(province);
+	    jobPost.setIndustry(industry);
+	    jobPost.setStatus("pending");
+	    // Handle file upload
+	    if (image != null && !image.isEmpty()) {
+	        try {
+	            String uploadDir = "images/";
+	            File uploadDirFile = new File(uploadDir);
+	            if (!uploadDirFile.exists()) {
+	                uploadDirFile.mkdirs();
+	            }
+	            String originalFilename = image.getOriginalFilename();
+	            Path filePath = Paths.get(uploadDir, originalFilename);
+	            Files.write(filePath, image.getBytes());
+	            jobPost.setImage(filePath.toString());
+	        } catch (IOException e) {
+	            System.err.println("Error saving image file: " + e.getMessage());
+	            return "error";
+	        }
+	    }
+
+	    // Update the job post in the database
+	    try {
+	        tinTuyenDungDAO.save(jobPost);
+	    } catch (Exception e) {
+	        System.err.println("Error updating job posting: " + e.getMessage());
+	        return "error";
+	    }
+
+	    // Redirect to the index page after successful update
+	    return "redirect:/index";
+	}
 
 
     
@@ -163,7 +251,9 @@ public class JobController {
             model.addAttribute("error", "Unable to fetch job posting.");
         }
 
-        loadAll(model);
+    	loadAll(model);
+		loadIndustries(model);
+		loadProvinces(model);
         System.out.println("Received ID: " + id);
         return "crud/CRUDTinTuyenDung";
     }
@@ -172,7 +262,7 @@ public class JobController {
         try {
             // Gọi API để lấy danh sách tin tuyển dụng
             ResponseEntity<List<TinTuyenDung>> response = restTemplate.exchange(
-                    "http://localhost:8080/api/tin-tuyen-dung",
+                    "http://localhost:8080/api/tin-tuyen-dung/getALL",
                     HttpMethod.GET,
                     null,
                     new ParameterizedTypeReference<List<TinTuyenDung>>() {}
