@@ -43,7 +43,8 @@
 									<li class="list-group-item" th:each="jobPost : ${jobPosts}">
 										<!-- Basic Information -->
 										<div class="d-flex align-items-start">
-										<img th:src="@{'/images/' + ${jobPost.image}}" alt="Job Image" class="me-3" width="150" height="150">
+											<img th:src="@{'/images/' + ${jobPost.image}}"
+												alt="Job Image" class="me-3" width="150" height="150">
 
 
 											<div class="flex-grow-1">

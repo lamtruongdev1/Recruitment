@@ -48,6 +48,9 @@ public class NguoiTimViec {
     @OneToMany(mappedBy = "reviewer")
     @JsonManagedReference
     private List<Review> reviews;
+    
+    @Column(name = "avatar")
+    private String avatar;
 
 
 
