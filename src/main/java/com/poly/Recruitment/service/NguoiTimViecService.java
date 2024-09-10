@@ -15,4 +15,13 @@ public class NguoiTimViecService {
     public NguoiTimViec getJobseekerById(Long jobseekerID) {
         return nguoiTimViecRepository.findById(jobseekerID).orElse(null);
     }
+
+    public NguoiTimViec save(NguoiTimViec nguoiTimViec) {
+        return nguoiTimViecRepository.save(nguoiTimViec);
+    }
+    public void deleteById(Long jobseekerID) {
+        nguoiTimViecRepository.deleteById(jobseekerID);
+    }
+
+    // Additional methods as needed
 }

@@ -31,4 +31,14 @@ public interface TinTuyenDungDAO extends JpaRepository<TinTuyenDung, Long> {
     @Modifying
     @Query(nativeQuery = true, value = "UPDATE tin_tuyen_dung SET status = :status WHERE job_id = :jobId")
     void updateStatus(@Param("jobId") Long jobId, @Param("status") String status);
+    
+    
+    
+    
+    @Query("SELECT COUNT(t) FROM TinTuyenDung t WHERE t.status = 'APPROVED'")
+    Long countApprovedJobs();
+
+    @Query("SELECT COUNT(t) FROM TinTuyenDung t WHERE t.status = 'PENDING'")
+    Long countPendingJobs();
+
 }

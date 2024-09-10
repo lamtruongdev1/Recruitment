@@ -5,10 +5,12 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
@@ -118,11 +120,13 @@ public class JobController {
 	        @RequestParam(name = "image", required = false) MultipartFile image,
 	        @RequestParam(name = "salary") Double salary,
 	        @RequestParam(name = "province") String province,
-	        @RequestParam(name = "industry") String industry) {
+	        @RequestParam(name = "industry") String industry,
+	        RedirectAttributes redirectAttributes) {
 	    
+	    // Tạo đối tượng TinTuyenDung
 	    TinTuyenDung jobPost = new TinTuyenDung();
-	    
-	    // Setting values to jobPost
+
+	    // Thiết lập các giá trị cho jobPost
 	    jobPost.setTitle(title);
 	    jobPost.setDescription(description);
 	    jobPost.setPosition(position);
@@ -134,34 +138,65 @@ public class JobController {
 	    jobPost.setSalary(salary);
 	    jobPost.setProvince(province);
 	    jobPost.setIndustry(industry);
+	    jobPost.setStatus("pending"); // Đặt trạng thái mặc định là "pending"
 
-	    // Handle file upload
+	    // Đường dẫn tới thư mục lưu trữ ảnh
+	    String uploadDir = "src/main/resources/static/images/";
+
+	    // Xử lý việc upload file ảnh
 	    if (image != null && !image.isEmpty()) {
 	        try {
-	            String uploadDir = "images/";
-	            File uploadDirFile = new File(uploadDir);
-	            if (!uploadDirFile.exists()) {
-	                uploadDirFile.mkdirs();
+	            // Kiểm tra và tạo thư mục nếu chưa tồn tại
+	            Path uploadPath = Paths.get(uploadDir);
+	            if (!Files.exists(uploadPath)) {
+	                Files.createDirectories(uploadPath);
 	            }
+
+	            // Lấy tên gốc của file ảnh và tạo tên file duy nhất để lưu trữ
 	            String originalFilename = image.getOriginalFilename();
-	            Path filePath = Paths.get(uploadDir, originalFilename);
-	            Files.write(filePath, image.getBytes());
-	            jobPost.setImage(filePath.toString());
+	            String uniqueFilename = UUID.randomUUID().toString() + "_" + originalFilename;
+	            Path filePath = uploadPath.resolve(uniqueFilename);
+
+	            // Lưu file vào thư mục đã chỉ định
+	            Files.copy(image.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+
+	            // Kiểm tra xem tệp đã được lưu thành công hay chưa
+	            if (Files.exists(filePath)) {
+	                System.out.println("Tệp đã được lưu tại: " + filePath.toString());
+	            } else {
+	                System.err.println("Không thể lưu tệp!");
+	                redirectAttributes.addFlashAttribute("message", "Không thể lưu tệp!");
+	                return "redirect:/error";
+	            }
+
+	            // Lưu tên file duy nhất vào cơ sở dữ liệu
+	            jobPost.setImage(uniqueFilename); 
+
 	        } catch (IOException e) {
 	            System.err.println("Error saving image file: " + e.getMessage());
-	            return "error";
+	            redirectAttributes.addFlashAttribute("message", "Error saving image file: " + e.getMessage());
+	            return "redirect:/error";
 	        }
 	    }
 
+	    // Lưu jobPost vào cơ sở dữ liệu
 	    try {
+	        // Giả sử bạn có phương thức save trong DAO để lưu jobPost
 	        tinTuyenDungDAO.save(jobPost);
 	    } catch (Exception e) {
-	        System.err.println("Error creating job posting: " + e.getMessage());
-	        return "error";
+	        System.err.println("Error saving job post: " + e.getMessage());
+	        redirectAttributes.addFlashAttribute("message", "Error saving job post: " + e.getMessage());
+	        return "redirect:/error";
 	    }
 
+	    // Thêm thông báo thành công
+	    redirectAttributes.addFlashAttribute("message", "Job posting created successfully!");
+
+	    // Chuyển hướng về trang job postings
 	    return "redirect:/index";
 	}
+
+
 
 
 	@PostMapping("/job-postings/update/{id}")
@@ -181,7 +216,8 @@ public class JobController {
 	        @RequestParam(name = "industry") String industry) {
 	    
 	    // Retrieve the existing job post by ID
-	    TinTuyenDung jobPost = tinTuyenDungDAO.findById(id).orElseThrow(() -> new RuntimeException("Job post not found"));
+	    TinTuyenDung jobPost = tinTuyenDungDAO.findById(id)
+	        .orElseThrow(() -> new RuntimeException("Job post not found"));
 
 	    // Set the updated values to the jobPost
 	    jobPost.setTitle(title);
@@ -196,18 +232,28 @@ public class JobController {
 	    jobPost.setProvince(province);
 	    jobPost.setIndustry(industry);
 	    jobPost.setStatus("pending");
+
 	    // Handle file upload
 	    if (image != null && !image.isEmpty()) {
 	        try {
-	            String uploadDir = "images/";
+	            String uploadDir = "src/main/resources/static/images/";
 	            File uploadDirFile = new File(uploadDir);
 	            if (!uploadDirFile.exists()) {
 	                uploadDirFile.mkdirs();
 	            }
+	            
+	            // Xóa file ảnh cũ nếu có ảnh mới được cập nhật
+	            if (jobPost.getImage() != null && !jobPost.getImage().isEmpty()) {
+	                Path oldFilePath = Paths.get(uploadDir, jobPost.getImage());
+	                Files.deleteIfExists(oldFilePath);
+	            }
+
+	            // Lưu file ảnh mới
 	            String originalFilename = image.getOriginalFilename();
-	            Path filePath = Paths.get(uploadDir, originalFilename);
+	            String uniqueFilename = UUID.randomUUID().toString() + "_" + originalFilename;
+	            Path filePath = Paths.get(uploadDir, uniqueFilename);
 	            Files.write(filePath, image.getBytes());
-	            jobPost.setImage(filePath.toString());
+	            jobPost.setImage(uniqueFilename);
 	        } catch (IOException e) {
 	            System.err.println("Error saving image file: " + e.getMessage());
 	            return "error";
@@ -225,6 +271,7 @@ public class JobController {
 	    // Redirect to the index page after successful update
 	    return "redirect:/index";
 	}
+
 
 
     

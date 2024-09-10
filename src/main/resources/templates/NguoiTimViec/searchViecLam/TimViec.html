@@ -104,7 +104,8 @@
 				<div th:each="job : ${jobPostings}" class="col-md-4 mb-4">
 					<div class="job-card">
 						<!-- Job Image -->
-						<img th:src="@{${job.image}}" alt="Job Image" class="job-image" />
+				<img th:src="@{'/images/' + ${job.image}}" alt="Job Image" class="job-image" />
+
 
 						<div class="job-details">
 							<!-- Job Title -->

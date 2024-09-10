@@ -60,11 +60,11 @@ public class SecurityConfig {
 				).authorizeHttpRequests(auth -> {
 
 					auth.requestMatchers("/resources/**", "/static/**", "/templates/**", "/templates/NguoiTimViec/**",
-							"/static/uploads/**","/admin/cv/**").permitAll();
+							"/static/uploads/**","/admin/cv/**","/static/images/**").permitAll();
 					auth.requestMatchers("/auth/**").permitAll();
 					auth.requestMatchers("/admin/**").hasAuthority(RoleEnum.ADMIN.name());
 					auth.requestMatchers("/api/**").permitAll();
-					auth.requestMatchers("/index").authenticated();
+					auth.requestMatchers("/index/**","/nguoitimviec/**").authenticated() ;
 					auth.requestMatchers("/api/files/**", "/api/reviews", "/api/reviews/add", "/public/**",
 							"/api/files/cv/**", "/api/cart/**", "/api/cart","/admin/cv/upload","/admin/cv/delete/**","/api/provinces/**","/job-postings/create").permitAll();
 					auth.anyRequest().authenticated();
