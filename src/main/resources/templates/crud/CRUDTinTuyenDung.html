@@ -43,8 +43,10 @@
 									<li class="list-group-item" th:each="jobPost : ${jobPosts}">
 										<!-- Basic Information -->
 										<div class="d-flex align-items-start">
-											<img th:src="@{${jobPost.image}}" alt="Job Image"
-												class="me-3" width="150" height="150">
+											<img th:src="@{'/images/' + ${jobPost.image}}"
+												alt="Job Image" class="me-3" width="150" height="150">
+
+
 											<div class="flex-grow-1">
 												<h6 th:text="${jobPost.title}">Tiêu đề tin đăng</h6>
 												<p>
@@ -71,8 +73,8 @@
 														th:text="${jobPost.benefits}">Quyền lợi</span>
 												</p>
 												<p>
-													<strong>Đăng bởi:</strong> <span th:text="${jobPost.postedBy}">Đăng
-														bởi</span>
+													<strong>Đăng bởi:</strong> <span
+														th:text="${jobPost.postedBy}">Đăng bởi</span>
 												</p>
 												<p>
 													Ngày đăng: <span th:text="${jobPost.postedDate}"></span>
@@ -212,7 +214,8 @@
 									</div>
 									<div class="mb-3">
 										<label for="" class="form-label">Đăng Bởi</label>
-										<textarea class="form-control" id="" name="postedBy" rows="2" required></textarea>
+										<textarea class="form-control" id="" name="postedBy" rows="2"
+											required></textarea>
 									</div>
 
 									<div class="d-flex justify-content-end">
@@ -320,7 +323,8 @@
 
 							<div class="mb-3">
 								<label for="" class="form-label">Đăng Bởi</label>
-								<textarea class="form-control" id="" name="postedBy" rows="2" required></textarea>
+								<textarea class="form-control" id="" name="postedBy" rows="2"
+									required></textarea>
 							</div>
 
 							<button type="submit" class="btn btn-primary">Tạo</button>

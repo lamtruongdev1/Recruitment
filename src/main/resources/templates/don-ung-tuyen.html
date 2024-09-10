@@ -40,9 +40,10 @@
                                     (app.status == 'Đang xử lý' ? 'custom-status-processing' : 
                                     (app.status == 'Đã duyệt' ? 'custom-status-approved' : 'custom-status-rejected'))"
 								th:text="${app.status}"></span></td>
-							<td class="py-2 px-4 border-b">
-    <a th:href="${app.cvURL}" class="custom-cv-link" target="_blank">View CV</a>
+<td class="py-2 px-4 border-b">
+    <a th:href="@{'/uploads/' + ${app.cvURL}}" class="custom-cv-link" target="_blank">View CV</a>
 </td>
+
 
 						</tr>
 					</tbody>

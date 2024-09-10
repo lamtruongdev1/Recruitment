@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.poly.Recruitment.entity.NhaTuyenDung.NhaTuyenDungBuilder;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -47,6 +48,9 @@ public class NguoiTimViec {
     @OneToMany(mappedBy = "reviewer")
     @JsonManagedReference
     private List<Review> reviews;
+    
+    @Column(name = "avatar")
+    private String avatar;
 
 
 
@@ -59,4 +63,8 @@ public class NguoiTimViec {
                ", skill=" + skill +
                ", reviewsCount=" + (reviews != null ? reviews.size() : 0) + "]";
     }
+
+
+
+	
 }

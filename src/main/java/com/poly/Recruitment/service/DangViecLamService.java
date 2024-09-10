@@ -6,6 +6,7 @@ import com.poly.Recruitment.repository.TinTuyenDungDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -68,10 +69,11 @@ public class DangViecLamService {
         return tinTuyenDungRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("JobPosting", "id", id));
     }
+    @Transactional
     public void approveJobPosting(Long id) {
         tinTuyenDungRepository.updateStatus(id, "APPROVED");
     }
-
+    @Transactional
     public void rejectJobPosting(Long id) {
         tinTuyenDungRepository.updateStatus(id, "REJECTED");
     }

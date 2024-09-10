@@ -2,15 +2,16 @@ package com.poly.Recruitment.controller;
 
 import com.poly.Recruitment.dto.MessageResponse;
 import com.poly.Recruitment.entity.NhaTuyenDung;
+import com.poly.Recruitment.entity.NguoiTimViec;
 import com.poly.Recruitment.entity.User;
 import com.poly.Recruitment.service.MailService;
+import com.poly.Recruitment.service.NguoiTimViecService;
 import com.poly.Recruitment.service.NhaTuyenDungService;
 import com.poly.Recruitment.service.UserService;
 import com.poly.Recruitment.util.Common;
 import com.poly.Recruitment.util.Keywords;
 import com.poly.Recruitment.util.RoleEnum;
 import com.poly.Recruitment.util.SessionUtil;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.http.MediaType;
@@ -41,6 +42,7 @@ public class AuthenticationController {
 	private final UserService userService;
 	private final PasswordEncoder passwordEncoder;
 	private final NhaTuyenDungService nhaTuyenDungService;
+	private final NguoiTimViecService nguoiTimViecService;
 	private final MailService mailService;
 	private final SessionUtil sessionUtil;
 
@@ -92,29 +94,71 @@ public class AuthenticationController {
 		return "accountmanager";
 	}
 
-	 @PostMapping("/register/user")
-	    @ResponseBody
-	    public ResponseEntity<MessageResponse> registerUser(@Valid @RequestBody User user, Errors errors) {
-	        if(errors.hasErrors()){
-	            return new ResponseEntity<>(MessageResponse.builder().message("Register User Fail")
-	                    .code(HttpStatus.BAD_REQUEST.value())
-	                    .build(),HttpStatus.BAD_REQUEST);
-	        }
-	        // check mail
-	        if(checkEmail(user.getEmail())){
-	            return new ResponseEntity<>(MessageResponse.builder().message("Email Existed")
-	                    .code(HttpStatus.BAD_REQUEST.value())
-	                    .build(),HttpStatus.BAD_REQUEST);
-	        }
+	@PostMapping("/register/user")
+	@ResponseBody
+	public ResponseEntity<MessageResponse> registerUser(
+	        @RequestParam("name") String name,
+	        @RequestParam("email") String email,
+	        @RequestParam("phone") String phone,
+	        @RequestParam("address") String address,
+	        @RequestParam("password") String password,
+	        @RequestParam("confirmPassword") String confirmPassword,
+	        @RequestParam("avatarFile") MultipartFile avatarFile) {
 
-	        user.setPassword(passwordEncoder.encode(user.getPassword()));
-	        user.setRole(RoleEnum.USER.toString());
-	        userService.save(user);
-	        return new ResponseEntity<>(MessageResponse.builder().message("Register User Success")
-	                .code(HttpStatus.OK.value())
-	                .data(user)
-	                .build(),HttpStatus.OK);
+	    if (password == null || password.isEmpty() || !password.equals(confirmPassword)) {
+	        return new ResponseEntity<>(MessageResponse.builder()
+	                .message("Password cannot be null, empty or passwords do not match")
+	                .code(HttpStatus.BAD_REQUEST.value()).build(),
+	                HttpStatus.BAD_REQUEST);
 	    }
+
+	    // Validate email existence
+	    if (checkEmail(email)) {
+	        return new ResponseEntity<>(MessageResponse.builder()
+	                .message("Email Existed")
+	                .code(HttpStatus.BAD_REQUEST.value()).build(),
+	                HttpStatus.BAD_REQUEST);
+	    }
+
+	    // Handle avatar file upload
+	    String avatarFileName = null;
+	    if (avatarFile != null && !avatarFile.isEmpty()) {
+	        try {
+	            avatarFileName = avatarFile.getOriginalFilename();
+	            Path path = Paths.get(uploadDir, avatarFileName);
+	            Files.write(path, avatarFile.getBytes());
+	        } catch (IOException e) {
+	            e.printStackTrace();
+	            return new ResponseEntity<>(MessageResponse.builder()
+	                    .message("File upload failed")
+	                    .code(HttpStatus.INTERNAL_SERVER_ERROR.value()).build(),
+	                    HttpStatus.INTERNAL_SERVER_ERROR);
+	        }
+	    }
+
+	    // Save user
+	    User user = userService.save(User.builder()
+	            .email(email)
+	            .password(passwordEncoder.encode(password))
+	            .role(RoleEnum.USER.toString())
+	            .phone(phone)
+	            .address(address)
+	            .name(name)
+	            .photo(avatarFileName)
+	            .build());
+
+	    // Save job seeker information
+	    NguoiTimViec nguoiTimViec = new NguoiTimViec();
+	    nguoiTimViec.setUser(user);
+	    nguoiTimViec.setAvatar(avatarFileName);
+	    nguoiTimViecService.save(nguoiTimViec);
+
+	    return new ResponseEntity<>(MessageResponse.builder()
+	            .message("Register User Success")
+	            .code(HttpStatus.OK.value())
+	            .data(nguoiTimViec).build(), HttpStatus.OK);
+	}
+
 
 	@PostMapping("/register/company")
 	@ResponseBody
@@ -248,16 +292,39 @@ public class AuthenticationController {
 
 	@PostMapping("/upload")
 	public String uploadFile(@RequestParam("file") MultipartFile file, Model model) {
-		try {
-			String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
-			Path path = Paths.get(uploadDir + fileName);
-			Files.write(path, file.getBytes());
-			model.addAttribute("success", "File uploaded successfully: " + fileName);
-		} catch (IOException e) {
-			model.addAttribute("error", "File upload failed: " + e.getMessage());
-		}
-		return "accountmanager";
+	    try {
+	        // Kiểm tra loại file
+	        String contentType = file.getContentType();
+	        if (!contentType.startsWith("image/")) {
+	            model.addAttribute("error", "Chỉ cho phép tải lên file ảnh.");
+	            return "accountmanager";
+	        }
+
+	        // Kiểm tra kích thước file
+	        long maxFileSize = 5 * 1024 * 1024; // 5MB
+	        if (file.getSize() > maxFileSize) {
+	            model.addAttribute("error", "Kích thước file vượt quá giới hạn cho phép 5MB.");
+	            return "accountmanager";
+	        }
+
+	        // Tạo thư mục nếu chưa tồn tại
+	        Path directoryPath = Paths.get(uploadDir);
+	        if (!Files.exists(directoryPath)) {
+	            Files.createDirectories(directoryPath);
+	        }
+
+	        // Lưu file
+	        String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
+	        Path path = Paths.get(uploadDir + fileName);
+	        Files.write(path, file.getBytes());
+
+	        model.addAttribute("success", "Tải lên thành công: " + fileName);
+	    } catch (IOException e) {
+	        model.addAttribute("error", "Tải lên thất bại: " + e.getMessage());
+	    }
+	    return "accountmanager";
 	}
+
 
 	private boolean checkEmail(String mail) {
 		return userService.findByEmail(mail) != null;

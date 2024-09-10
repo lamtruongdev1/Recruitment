@@ -37,7 +37,7 @@
 			<!-- Job Seeker Information Card -->
 			<div class="col-md-4">
 				<div class="card mb-4 small-card">
-					<img th:src="@{${jobseeker.user.photo}}"
+					<img th:src="@{'/images/' + ${jobseeker.user.photo}}"
 						class="card-img-top small-img" alt="Job Seeker Image">
 					<div class="card-body">
 						<h5 class="card-title">Thông tin ứng viên</h5>

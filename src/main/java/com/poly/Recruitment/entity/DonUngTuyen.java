@@ -28,8 +28,11 @@ public class DonUngTuyen {
     @Column(name = "name", columnDefinition = "nvarchar(max)")
     private String name;
     private String phone;
+    
+    @Column(name = "address", columnDefinition = "nvarchar(max)")
+    private String address;
 
-    @Column(length = 255)
+    @Column(length = 255 ,columnDefinition = "nvarchar(max)")
     private String status;
 
     @Column(name = "cv_url", columnDefinition = "nvarchar(max)")
