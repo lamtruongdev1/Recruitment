@@ -1,3 +1,26 @@
+.badge-container {
+    position: relative;
+    display: inline-block;
+}
+
+.badge {
+    position: absolute;
+    top: -10px; /* Điều chỉnh để đặt badge lên trên đầu của biểu tượng giỏ hàng */
+    right: -10px; /* Điều chỉnh để badge nằm về bên phải của biểu tượng giỏ hàng */
+    background-color: #ff0000;
+    color: white;
+    border-radius: 50%;
+    padding: 0.25em 0.5em;
+    font-size: 0.75em;
+    font-weight: bold;
+    min-width: 20px;
+    height: 20px; /* Điều chỉnh kích thước của badge */
+    text-align: center;
+    line-height: 20px; /* Căn giữa nội dung badge */
+    transform: translate(50%, -50%); /* Dịch chuyển để badge nằm chính xác ở trên đỉnh */
+}
+
+
 .product-header {
 	text-align: center;
 	margin-bottom: 20px;

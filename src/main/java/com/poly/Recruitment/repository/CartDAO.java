@@ -38,4 +38,7 @@ List<Object[]> findAllCartsWithCvs();
 
 List<Cart> findByCvs(CV cv);
 
+@Query(value = "SELECT COUNT(*) FROM cart_cv", nativeQuery = true)
+int countTotalCVInCart();
+
 }

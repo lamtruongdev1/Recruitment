@@ -9,10 +9,11 @@
 </head>
 <body>
 	<div class="container">
-		   <div class="product-header">
-                <h1 class="product-title">CV Chuyên Nghiệp</h1>
-                <p class="product-description">Mẫu CV nhỏ gọn, chuyên nghiệp giúp bạn nổi bật trong mắt nhà tuyển dụng.</p>
-            </div>
+		<div class="product-header">
+			<h1 class="product-title">CV Chuyên Nghiệp</h1>
+			<p class="product-description">Mẫu CV nhỏ gọn, chuyên nghiệp giúp
+				bạn nổi bật trong mắt nhà tuyển dụng.</p>
+		</div>
 		<div class="row mt-3">
 			<div class="col-md-4" th:each="cv : ${cvs}">
 				<div class="card">
@@ -40,44 +41,59 @@
 			</div>
 		</div>
 	</div>
-	<script>
-	function addToCart(cvId) {
-	    if (!cvId) {
-	        alert('CV ID không hợp lệ!');
-	        return;
-	    }
+<script>
+function showAlert(title, text, icon) {
+    Swal.fire({
+        title: title,
+        text: text,
+        icon: icon,
+        confirmButtonText: 'OK',
+        // Customize the appearance and behavior as needed
+    });
+}
 
-	    fetch('/api/cart/add?cvId=' + encodeURIComponent(cvId), {
-	        method: 'POST',
-	        headers: {
-	            'Content-Type': 'application/json'
-	        },
-	        credentials: 'include' // Để gửi cookie session
-	    })
-	    .then(response => {
-	        if (!response.ok) {
-	            return response.text().then(text => {throw new Error(text)});
-	        }
-	        return response.text(); // Nhận phản hồi dưới dạng văn bản
-	    })
-	    .then(message => {
-	        alert('CV đã được thêm vào giỏ hàng: ' + message);
-	    })
-	    .catch(error => {
-	        alert('Có lỗi xảy ra: ' + error.message);
-	    });
-	}
+function addToCart(cvId) {
+    if (!cvId) {
+        showAlert('Lỗi', 'CV ID không hợp lệ!', 'error');
+        return;
+    }
 
-	// Gán sự kiện cho các nút khi người dùng nhấp vào
-	document.querySelectorAll('.btn-add-to-cart').forEach(button => {
-	    button.addEventListener('click', function(event) {
-	        event.preventDefault(); // Ngăn chặn hành động mặc định của liên kết
-	        const cvId = this.getAttribute('data-cv-id'); // Đọc giá trị từ thuộc tính data-cv-id
-	        addToCart(cvId); // Gửi yêu cầu đến API
-	    });
-	});
+    fetch('/api/cart/add?cvId=' + encodeURIComponent(cvId), {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        credentials: 'include' // Để gửi cookie session
+    })
+    .then(response => {
+        if (!response.ok) {
+            return response.text().then(text => {throw new Error(text)});
+        }
+        return response.text(); // Nhận phản hồi dưới dạng văn bản
+    })
+    .then(message => {
 
-    </script>
+        showAlert('Thành công', 'CV đã được thêm vào giỏ hàng: ' + message, 'success');
+        setTimeout(() => {
+            window.location.reload();
+        }, 3000);
+    })
+    .catch(error => {
+        showAlert('Lỗi', 'Có lỗi xảy ra: ' + error.message, 'error');
+    });
+}
+
+document.addEventListener('DOMContentLoaded', (event) => { 
+    document.querySelectorAll('.btn-add-to-cart').forEach(button => {
+        button.addEventListener('click', function(event) {
+            event.preventDefault(); // Ngăn chặn hành động mặc định của liên kết
+            const cvId = this.getAttribute('data-cv-id'); // Đọc giá trị từ thuộc tính data-cv-id
+            addToCart(cvId); // Gửi yêu cầu đến API
+        });
+    });
+});
+</script>
+
 
 </body>
 </html>

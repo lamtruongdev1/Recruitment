@@ -45,7 +45,11 @@ public class CartRestController {
     @Autowired
     private UserDAO userRepository;
     
- 
+    @GetMapping("/total-cv")
+    public ResponseEntity<Integer> getTotalCVInCart() {
+        int totalCV = cartRepository.countTotalCVInCart();
+        return ResponseEntity.ok(totalCV);
+    }
     
     @PostMapping("/add")
     public ResponseEntity<String> addToCart(@RequestParam Long cvId, HttpSession session) {

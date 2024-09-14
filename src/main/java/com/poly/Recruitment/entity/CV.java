@@ -3,6 +3,9 @@ package com.poly.Recruitment.entity;
 import java.math.BigDecimal;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -12,6 +15,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class CV {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,6 +39,9 @@ public class CV {
     @ManyToMany(mappedBy = "cvs", cascade = CascadeType.ALL)
     private List<Cart> carts;
 
+    @ManyToOne
+    @JsonIgnore
+    private User user;
 
     @PreRemove
     private void removeCarts() {

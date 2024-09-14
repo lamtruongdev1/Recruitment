@@ -19,6 +19,8 @@ public class JobSearchController {
 
     @GetMapping("/api/jobs/search")
     public List<TinTuyenDung> searchJobs(@RequestParam("keyword") String keyword) {
-        return tinTuyenDungDAO.searchJobsByTitle(keyword);
+        // Trạng thái công việc đã được duyệt
+        String status = "approved"; 
+        return tinTuyenDungDAO.searchJobsByTitleAndStatus(keyword, status);
     }
 }

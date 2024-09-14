@@ -1,6 +1,10 @@
 package com.poly.Recruitment.entity;
 
 
+import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -31,6 +35,10 @@ public class User {
     private String photo;
     private String role;
     private String password;
+
+    @OneToMany(mappedBy = "user")
+    @JsonIgnore
+    private List<CV> cvs;
 
     public User(Long userID) {
         this.userID = userID;

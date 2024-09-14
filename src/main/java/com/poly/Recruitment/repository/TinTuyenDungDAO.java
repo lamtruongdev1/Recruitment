@@ -33,7 +33,9 @@ public interface TinTuyenDungDAO extends JpaRepository<TinTuyenDung, Long> {
     void updateStatus(@Param("jobId") Long jobId, @Param("status") String status);
     
     
-    
+    @Query("SELECT j FROM TinTuyenDung j WHERE j.title LIKE %:keyword% AND j.status = :status")
+    List<TinTuyenDung> searchJobsByTitleAndStatus(@Param("keyword") String keyword, @Param("status") String status);
+
     
     @Query("SELECT COUNT(t) FROM TinTuyenDung t WHERE t.status = 'APPROVED'")
     Long countApprovedJobs();
