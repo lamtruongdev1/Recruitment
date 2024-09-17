@@ -12,6 +12,9 @@ import com.poly.Recruitment.util.Common;
 import com.poly.Recruitment.util.Keywords;
 import com.poly.Recruitment.util.RoleEnum;
 import com.poly.Recruitment.util.SessionUtil;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.http.MediaType;
@@ -65,30 +68,38 @@ public class AuthenticationController {
 
 	@GetMapping("/login/success")
 	public String successLogin() {
-		Authentication authenticationManager = SecurityContextHolder.getContext().getAuthentication();
-		UserDetails user = (UserDetails) authenticationManager.getPrincipal();
-		sessionUtil.setSessionId(Keywords.ACCOUNT_SESSION.name(), userService.findByEmail(user.getUsername()));
+	    // Lấy thông tin người dùng từ SecurityContext
+	    Authentication authenticationManager = SecurityContextHolder.getContext().getAuthentication();
+	    UserDetails user = (UserDetails) authenticationManager.getPrincipal();
 
-		String role = user.getAuthorities().iterator().next().getAuthority();
-		sessionUtil.setSessionId("userSessionEmail", user.getUsername());
+	    // Lưu thông tin người dùng vào session
+	    User loggedInUser = userService.findByEmail(user.getUsername());
+	    sessionUtil.setSessionId(Keywords.ACCOUNT_SESSION.name(), loggedInUser);
+	    sessionUtil.setSessionId("user_id", loggedInUser.getUserID()); // Lưu user_id vào session
+	    sessionUtil.setSessionId("userSessionEmail", user.getUsername());
 
-		if (role.equals(RoleEnum.USER.toString())) {
-			return "redirect:/nguoitimviec";
-		} else if (role.equals(RoleEnum.COMPANY.toString())) {
-			return "redirect:/index";
-		} else if (role.equals(RoleEnum.ADMIN.toString())) {
-			return "redirect:/admin/dashboard";
-		} else if (role.equals(RoleEnum.FAQ.toString())) {
-			return "redirect:/auth/error/disabled-account";
-		} else {
-			return "redirect:/login";
-		}
+	    // Xác định vai trò của người dùng
+	    String role = user.getAuthorities().iterator().next().getAuthority();
+
+	    // Chuyển hướng dựa trên vai trò của người dùng
+	    if (role.equals(RoleEnum.USER.toString())) {
+	        return "redirect:/nguoitimviec";
+	    } else if (role.equals(RoleEnum.COMPANY.toString())) {
+	        return "redirect:/index";
+	    } else if (role.equals(RoleEnum.ADMIN.toString())) {
+	        return "redirect:/admin/dashboard";
+	    } else if (role.equals(RoleEnum.FAQ.toString())) {
+	        return "redirect:/auth/error/disabled-account";
+	    } else {
+	        return "redirect:/login";
+	    }
 	}
+
+
 	@GetMapping("/error/disabled-account")
 	public String disabledAccount() {
-	    return "/error/disabled-account";
+		return "/error/disabled-account";
 	}
-
 
 	@GetMapping("/login/failure")
 	public String failureLogin(Model model) {
@@ -105,8 +116,8 @@ public class AuthenticationController {
 	@ResponseBody
 	public ResponseEntity<MessageResponse> registerUser(@RequestParam("name") String name,
 			@RequestParam("email") String email, @RequestParam("phone") String phone,
-			@RequestParam("address") String address, @RequestParam("password") String password,
-			@RequestParam("confirmPassword") String confirmPassword,
+			@RequestParam("skill") String skill, @RequestParam("address") String address,
+			@RequestParam("password") String password, @RequestParam("confirmPassword") String confirmPassword,
 			@RequestParam("avatarFile") MultipartFile avatarFile) {
 
 		if (password == null || password.isEmpty() || !password.equals(confirmPassword)) {
@@ -147,6 +158,7 @@ public class AuthenticationController {
 		NguoiTimViec nguoiTimViec = new NguoiTimViec();
 		nguoiTimViec.setUser(user);
 		nguoiTimViec.setAvatar(avatarFileName);
+		nguoiTimViec.setSkill(skill);
 		nguoiTimViecService.save(nguoiTimViec);
 
 		return new ResponseEntity<>(MessageResponse.builder().message("Register User Success")
@@ -247,8 +259,13 @@ public class AuthenticationController {
 	}
 
 	@GetMapping("/logout/success")
-	public String logoutSuccess() {
-		return "redirect:index";
+	public String logoutSuccess(HttpServletRequest request) {
+	    HttpSession session = request.getSession(false);
+	    if (session != null) {
+	        session.removeAttribute("cart"); // Xóa giỏ hàng khỏi session
+	        session.invalidate(); // Xóa toàn bộ session
+	    }
+	    return "redirect:/auth/login/form";
 	}
 
 	@GetMapping("/access-denied")

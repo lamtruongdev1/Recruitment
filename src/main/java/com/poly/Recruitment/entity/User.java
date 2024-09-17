@@ -1,9 +1,7 @@
 package com.poly.Recruitment.entity;
 
 
-import java.util.List;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -28,18 +26,16 @@ public class User {
 
     private String email;
     private String phone;
-    @Column(length = 255) // Use length for VARCHAR types
+    @Column(columnDefinition = "NVARCHAR(MAX)")
     private String address;
     @Lob
     @Column(name = "photo")
     private String photo;
     private String role;
     private String password;
-
-    @OneToMany(mappedBy = "user")
-    @JsonIgnore
-    private List<CV> cvs;
-
+    @OneToOne(mappedBy = "user")
+    @JsonBackReference
+    private Cart cart;
     public User(Long userID) {
         this.userID = userID;
     }

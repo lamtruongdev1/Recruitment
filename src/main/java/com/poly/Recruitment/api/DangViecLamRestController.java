@@ -64,7 +64,44 @@ public class DangViecLamRestController {
     // Lấy danh sách ngành nghề
     @GetMapping("/industries")
     public ResponseEntity<List<String>> getAllIndustries() {
-        List<String> industries = List.of("Công nghệ thông tin", "Tài chính", "Y tế", "Giáo dục", "Xây dựng");
+    	List<String> industries = List.of(
+    		    "Công nghệ thông tin",
+    		    "Tài chính",
+    		    "Y tế",
+    		    "Giáo dục",
+    		    "Xây dựng",
+    		    "Cơ khí",
+    		    "Điện tử",
+    		    "Hóa học",
+    		    "Dịch vụ khách hàng",
+    		    "Quản lý dự án",
+    		    "Marketing",
+    		    "Bán hàng",
+    		    "Logistics",
+    		    "Nhà hàng và khách sạn",
+    		    "Nông nghiệp",
+    		    "Môi trường",
+    		    "Vận tải",
+    		    "Du lịch",
+    		    "Nghệ thuật",
+    		    "Giải trí",
+    		    "Kinh doanh",
+    		    "Nhân sự",
+    		    "Pháp lý",
+    		    "Khoa học nghiên cứu",
+    		    "Chăm sóc sức khỏe",
+    		    "Bảo mật thông tin",
+    		    "Thiết kế đồ họa",
+    		    "Truyền thông",
+    		    "Tài nguyên nước",
+    		    "Công nghiệp chế biến",
+    		    "Kỹ thuật",
+    		    "Thể thao",
+    		    "Thời trang",
+    		    "Nội thất",
+    		    "Xã hội và cộng đồng"
+    		);
+
         return ResponseEntity.ok(industries);
     }
 }

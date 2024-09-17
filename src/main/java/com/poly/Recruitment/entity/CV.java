@@ -3,8 +3,7 @@ package com.poly.Recruitment.entity;
 import java.math.BigDecimal;
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -15,7 +14,6 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class CV {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -37,11 +35,8 @@ public class CV {
     private String fileURL;
 
     @ManyToMany(mappedBy = "cvs", cascade = CascadeType.ALL)
+    @JsonBackReference 
     private List<Cart> carts;
-
-    @ManyToOne
-    @JsonIgnore
-    private User user;
 
     @PreRemove
     private void removeCarts() {
@@ -52,4 +47,3 @@ public class CV {
         }
     }
 }
-

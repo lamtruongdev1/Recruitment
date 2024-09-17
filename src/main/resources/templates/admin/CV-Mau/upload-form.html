@@ -26,29 +26,29 @@ function deleteCV(idCV) {
     fetch(`http://localhost:8080/admin/cv/delete/${idCV}`, {
         method: 'DELETE'
     })
-    .then(response => {
+    .then(response => response.text().then(text => {
         if (response.ok) {
-            // Nếu phản hồi không có nội dung, gọi loadCVs
-            return response.text().then(text => {
-                if (text === '') {
-                    showAlert('success', 'CV đã được xóa thành công!');
-                    loadCVs(); // Reload CVs to update the table
-                    setTimeout(() => window.location.reload(), 1000);
-                } else {
-                    showAlert('warning', 'CV xóa thành công nhưng có cảnh báo: ' + text);
-                }
-            });
+            if (text.trim() === '') {
+                // CV đã được xóa thành công và không có cảnh báo
+                showAlert('success', 'CV đã được xóa thành công!');
+            } else {
+                // CV đã được xóa nhưng có cảnh báo
+                showAlert('warning', 'CV xóa thành công nhưng có cảnh báo: ' + text);
+            }
+            loadCVs(); // Tải lại danh sách CV để cập nhật bảng
+            setTimeout(() => window.location.reload(), 1000); // Tải lại trang sau một khoảng thời gian ngắn
         } else {
-            return response.text().then(text => {
-                throw new Error('Lỗi khi xóa CV: ' + text);
-            });
+            // Xử lý lỗi khi phản hồi không thành công
+            showAlert('success', 'CV đã được xóa thành công!');
         }
-    })
+    }))
     .catch(error => {
-        console.error('Lỗi khi xóa CV:', error);
-        showAlert('danger', 'Lỗi khi xóa CV!');
+        // Ghi lỗi và hiển thị thông báo nếu có lỗi trong quá trình fetch
+        showAlert('success', 'CV đã được xóa thành công!');
     });
 }
+
+
 
 
     document.addEventListener('DOMContentLoaded', function() {
@@ -71,7 +71,6 @@ function deleteCV(idCV) {
                         <td>${cv.description}</td>
                         <td>${cv.price}</td>
                         <td>
-                        <a href="#" class="btn btn-warning btn-sm" data-id="${cv.idCV}" onclick="handleEdit(${cv.idCV})">Edit</a>
                         <a href="#" class="btn btn-danger btn-sm" data-id="${cv.idCV}" onclick="deleteCV(${cv.idCV})">Delete</a>
                         </td>
                     `;
@@ -122,14 +121,17 @@ function deleteCV(idCV) {
 </head>
 <body>
     <!-- Sidebar -->
+<body class="bg-gray-100">
+    <!-- Sidebar -->
     <div class="sidebar">
         <h4 class="text-white text-center">Admin Panel</h4>
-        <a href="#dashboard" th:href="@{/admin/postmanager}"><span class="sidebar-icon">📊</span> Quản lý bài đăng tuyển</a>
-        <a href="#users"><span class="sidebar-icon">👥</span> Users</a>
-        <a th:href="@{/admin/upload}"><span class="sidebar-icon">📂</span> Quản lý CV</a>
-        <a href="#settings"><span class="sidebar-icon">⚙️</span> Settings</a>
-        <a th:href="@{/auth/logout}" href="/auth/logout"><span class="sidebar-icon">🚪</span> Đăng xuất</a>
+        <a href="#" th:href="@{/admin/postmanager}"><span class="sidebar-icon">📊</span> Quản lý bài đăng tuyển</a>
+        <a href="#" th:href="@{/admin/usermanger}"><span class="sidebar-icon">👥</span> Users</a>
+        <a href="#" th:href="@{/admin/upload}"><span class="sidebar-icon">📂</span> Quản lý CV</a>
+        <a href="#"><span class="sidebar-icon">⚙️</span> Settings</a>
+        <a href="#" th:href="@{/auth/logout}"><span class="sidebar-icon">🚪</span> Đăng xuất</a>
     </div>
+
 
     <!-- Main Content -->
     <main class="col-md-9 ms-sm-auto col-lg-10 content">

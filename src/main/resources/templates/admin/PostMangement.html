@@ -102,15 +102,17 @@
 </head>
 <body>
 	<!-- Sidebar -->
-	<div class="sidebar">
-		<h4 class="text-white text-center">Admin Panel</h4>
-		<a href="#dashboard" th:href="@{/admin/postmanager}"><span class="sidebar-icon">📊</span> Quản lý
-			bài đăng tuyển</a>  <a href="#users" ><span class="sidebar-icon">👥</span>
-			Users</a> <a th:href="@{/admin/upload}"><span class="sidebar-icon">📂</span>
-			Quản lý CV</a> <a href="#settings"><span class="sidebar-icon">⚙️</span>
-			Settings</a> <a th:href="@{/auth/logout}" href="/auth/logout"><span
-			class="sidebar-icon">🚪</span> Đăng xuất</a>
-	</div>
+<body class="bg-gray-100">
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <h4 class="text-white text-center">Admin Panel</h4>
+        <a href="#" th:href="@{/admin/postmanager}"><span class="sidebar-icon">📊</span> Quản lý bài đăng tuyển</a>
+        <a href="#" th:href="@{/admin/usermanger}"><span class="sidebar-icon">👥</span> Users</a>
+        <a href="#" th:href="@{/admin/upload}"><span class="sidebar-icon">📂</span> Quản lý CV</a>
+        <a href="#"><span class="sidebar-icon">⚙️</span> Settings</a>
+        <a href="#" th:href="@{/auth/logout}"><span class="sidebar-icon">🚪</span> Đăng xuất</a>
+    </div>
+
 
 
 	<!-- Main Content -->

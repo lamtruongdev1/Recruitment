@@ -104,13 +104,26 @@
 
                     const users = await response.json();
 
-                    userListElement.innerHTML = users.map(user => `
-                        <li class="flex justify-between items-center p-2 border rounded mb-2">
-                            <span>${user.name} (${user.email}) (${user.role}) </span>
-                            <button onclick="setRoleToFAQ(${user.userID})" class="bg-blue-500 text-white px-4 py-1 rounded hover:bg-blue-600">Vô Hiệu Hoá</button>
-                            <button onclick="showUpdateRoleModal(${user.userID}, '${user.role}')" class="bg-yellow-500 text-white px-4 py-1 rounded hover:bg-yellow-600">Sửa Vai Trò</button>
+                    userListElement.innerHTML = users
+                    .filter(user => user.role !== 'ADMIN')  // Lọc ra các user không phải ADMIN
+                    .map(user => `
+                        <li class="flex justify-between items-center p-4 border rounded mb-2">
+                            <div>
+                                <p><strong>Tên:</strong> ${user.name}</p>
+                                <p><strong>Email:</strong> ${user.email}</p>
+                                <p><strong>Vai trò:</strong> ${user.role}</p>
+                                <p><strong>Số điện thoại:</strong> ${user.phone || 'N/A'}</p>
+                                <p><strong>Địa chỉ:</strong> ${user.address}</p>
+                           
+                            
+                            </div>
+                            <div>
+                                <button onclick="setRoleToFAQ(${user.userID})" class="bg-blue-500 text-white px-4 py-1 rounded hover:bg-blue-600">Khoá tài khoản</button>
+                                <button onclick="showUpdateRoleModal(${user.userID}, '${user.role}')" class="bg-yellow-500 text-white px-4 py-1 rounded hover:bg-yellow-600">Kích Hoạt</button>
+                            </div>
                         </li>
                     `).join('');
+
                 } catch (error) {
                     console.error('Error loading users:', error);
                     Swal.fire({
@@ -166,13 +179,26 @@
 
                     const users = await response.json();
 
-                    userListElement.innerHTML = users.map(user => `
-                        <li class="flex justify-between items-center p-2 border rounded mb-2">
-                            <span>${user.name} (${user.email}) (${user.role})</span>
-                            <button onclick="setRoleToFAQ(${user.userID})" class="bg-blue-500 text-white px-4 py-1 rounded hover:bg-blue-600">Vô Hiệu Hoá</button>
-                            <button onclick="showUpdateRoleModal(${user.userID}, '${user.role}')" class="bg-yellow-500 text-white px-4 py-1 rounded hover:bg-yellow-600">Sửa Vai Trò</button>
+                    userListElement.innerHTML = users
+                    .filter(user => user.role !== 'ADMIN')  // Lọc ra các user không phải ADMIN
+                    .map(user => `
+                        <li class="flex justify-between items-center p-4 border rounded mb-2">
+                            <div>
+                                <p><strong>Tên:</strong> ${user.name}</p>
+                                <p><strong>Email:</strong> ${user.email}</p>
+                                <p><strong>Vai trò:</strong> ${user.role}</p>
+                                <p><strong>Số điện thoại:</strong> ${user.phone || 'N/A'}</p>
+                                <p><strong>Địa chỉ:</strong> ${user.address}</p>
+                           
+                            
+                            </div>
+                            <div>
+                                <button onclick="setRoleToFAQ(${user.userID})" class="bg-blue-500 text-white px-4 py-1 rounded hover:bg-blue-600">Khoá tài khoản</button>
+                                <button onclick="showUpdateRoleModal(${user.userID}, '${user.role}')" class="bg-yellow-500 text-white px-4 py-1 rounded hover:bg-yellow-600">Kích Hoạt</button>
+                            </div>
                         </li>
                     `).join('');
+
                 } catch (error) {
                     console.error('Error searching users:', error);
                     Swal.fire({
@@ -187,13 +213,13 @@
             
             window.showUpdateRoleModal = function(userID, currentRole) {
                 Swal.fire({
-                    title: 'Cập nhật vai trò',
+                    title: 'Kích Hoạt',
                     input: 'text',
                     inputValue: currentRole,
                     showCancelButton: true,
                     confirmButtonText: 'Cập nhật',
                     cancelButtonText: 'Hủy',
-                    inputPlaceholder: 'Nhập vai trò mới'
+                    inputPlaceholder: 'Nhập vai trò '
                 }).then(async (result) => {
                     if (result.isConfirmed) {
                         const newRole = result.value;

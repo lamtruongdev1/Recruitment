@@ -27,6 +27,7 @@ import com.poly.Recruitment.repository.CartDAO;
 import com.poly.Recruitment.repository.UserDAO;
 import com.poly.Recruitment.service.CartService;
 
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpSession;
 
 @RestController
@@ -45,11 +46,7 @@ public class CartRestController {
     @Autowired
     private UserDAO userRepository;
     
-    @GetMapping("/total-cv")
-    public ResponseEntity<Integer> getTotalCVInCart() {
-        int totalCV = cartRepository.countTotalCVInCart();
-        return ResponseEntity.ok(totalCV);
-    }
+ 
     
     @PostMapping("/add")
     public ResponseEntity<String> addToCart(@RequestParam Long cvId, HttpSession session) {
@@ -89,6 +86,61 @@ public class CartRestController {
 
         return ResponseEntity.ok("CV đã được thêm vào giỏ hàng");
     }
+    
+    @GetMapping("/view")
+    public ResponseEntity<?> viewCartByUser(HttpSession session) {
+        // Lấy đối tượng User từ session với khóa "ACCOUNT_SESSION"
+        User user = (User) session.getAttribute("ACCOUNT_SESSION");
+
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Bạn cần đăng nhập để xem giỏ hàng");
+        }
+
+        Long userId = user.getUserID();
+
+        try {
+            List<Cart> carts = cartService.getCartsByUserId(userId);
+            if (carts.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No carts found for the user.");
+            }
+            return ResponseEntity.ok(carts);
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+    }
+    @GetMapping("/my-cart")
+    public ResponseEntity<?> getCartByAuth(HttpSession session) {
+        Long userId = (Long) session.getAttribute("user_id");
+
+        if (userId != null) {
+            Cart cart = cartRepository.findByUser(new User(userId));
+            if (cart != null) {
+                // Giới hạn số lượng dữ liệu trả về hoặc sử dụng phân trang
+                List<CV> cvs = cart.getCvs().stream().limit(10).collect(Collectors.toList());
+                cart.setCvs(cvs);
+                return ResponseEntity.ok(cart);
+            }
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Giỏ hàng không tìm thấy");
+        }
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Bạn cần đăng nhập để xem giỏ hàng");
+    }
+    @GetMapping("/total-cv")
+    public ResponseEntity<Long> getTotalCV(HttpSession session) {
+        Long userId = (Long) session.getAttribute("user_id");
+
+        if (userId != null) {
+            try {
+                Long totalCV = cartService.getTotalCV(userId);
+                return ResponseEntity.ok(totalCV);
+            } catch (Exception e) {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+            }
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+        }
+    }
+    
+    
     
     @GetMapping
     public ResponseEntity<List<CartDTO>> getAllCarts() {
@@ -138,4 +190,3 @@ public class CartRestController {
     }
  
 }
-

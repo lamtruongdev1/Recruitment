@@ -25,7 +25,7 @@ public class NhaTuyenDung {
     @Column(length = 255)
     private String companyName;
 
-    @Column(length = 255)
+    @Column(name = "companyAddress", columnDefinition = "nvarchar(max)")
     private String companyAddress;
 
     @Column(length = 20)

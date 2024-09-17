@@ -13,6 +13,7 @@ import com.poly.Recruitment.entity.Cart;
 import com.poly.Recruitment.entity.User;
 import com.poly.Recruitment.repository.CVDAO;
 import com.poly.Recruitment.repository.CartDAO;
+import com.poly.Recruitment.repository.UserDAO;
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
@@ -25,6 +26,8 @@ public class CartService {
 
     @Autowired
     private CartDAO cartRepository;
+    @Autowired
+    private UserDAO userRepository; // Inject UserDAO
 
     public ResponseEntity<String> addCvToCart(Long cvId, User user) {
         // Kiểm tra sự tồn tại của CV
@@ -51,7 +54,31 @@ public class CartService {
         System.out.println("Added CV with ID " + cvId + " to cart for user with ID " + user.getUserID());
         return ResponseEntity.ok("CV đã được thêm vào giỏ hàng");
     }
+    public Long getTotalCV(Long userId) {
+        // Lấy tất cả các CV trong giỏ hàng của người dùng và đếm số lượng
+        Cart cart = cartRepository.findByUserId(userId);
+        if (cart != null) {
+            return (long) cart.getCvs().size();
+        }
+        return 0L;
+    }
     
+    
+    
+    
+    public Cart getCartByUserId(Long userId) {
+        return cartRepository.findByUser_UserID(userId); // Lấy giỏ hàng của user từ CartDAO
+    }
+    public List<Cart> getCartsByUserId(Long userId) {
+        Optional<User> userOpt = userRepository.findById(userId);
+        if (userOpt.isEmpty()) {
+            throw new EntityNotFoundException("User not found with ID: " + userId);
+        }
+
+        User user = userOpt.get();
+        Cart cart = cartRepository.findByUser(user);
+        return (cart != null) ? List.of(cart) : List.of(); // Return as a list or adjust logic as needed
+    }
     public void removeCvFromAllCarts(Long cvId) {
         // Tìm CV theo ID
         Optional<CV> cvOpt = cvRepository.findById(cvId);

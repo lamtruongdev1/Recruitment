@@ -57,19 +57,19 @@ public class UserServiceImpl implements UserService {
     public ByteArrayInputStream exportUsersToExcel() throws IOException {
         List<User> users = userDAO.findAll(); // Lấy danh sách người dùng từ DAO
 
-        String[] columns = {"ID", "Name", "Email", "Phone","Role"};
+        String[] columns = {"ID", "Name", "Email", "Phone", "Role", "Address", "Photo"}; // Thêm các cột mới
 
         try (Workbook workbook = new XSSFWorkbook(); ByteArrayOutputStream out = new ByteArrayOutputStream()) {
             Sheet sheet = workbook.createSheet("Users");
 
-            // Create header row
+            // Tạo dòng header
             Row headerRow = sheet.createRow(0);
             for (int i = 0; i < columns.length; i++) {
                 Cell cell = headerRow.createCell(i);
                 cell.setCellValue(columns[i]);
             }
 
-            // Create data rows
+            // Tạo các dòng dữ liệu
             int rowNum = 1;
             for (User user : users) {
                 Row row = sheet.createRow(rowNum++);
@@ -79,10 +79,13 @@ public class UserServiceImpl implements UserService {
                 row.createCell(2).setCellValue(user.getEmail());
                 row.createCell(3).setCellValue(user.getPhone());
                 row.createCell(4).setCellValue(user.getRole());
+                row.createCell(5).setCellValue(user.getAddress() != null ? user.getAddress() : ""); // Địa chỉ
+                row.createCell(6).setCellValue(user.getPhoto() != null ? user.getPhoto() : ""); // Đường dẫn ảnh hoặc thông tin ảnh
             }
 
             workbook.write(out);
             return new ByteArrayInputStream(out.toByteArray());
         }
     }
+
 }
