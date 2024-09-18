@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Truy Cập Bị Từ Chối</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+            color: #212529;
+            text-align: center;
+            padding: 50px;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            font-size: 2.5rem;
+            color: #dc3545;
+        }
+        p {
+            font-size: 1.125rem;
+            margin-bottom: 20px;
+        }
+        a {
+            color: #007bff;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Truy Cập Bị Từ Chối</h1>
+        <p th:text="${errors}">Rất tiếc, bạn không có quyền truy cập vào trang này.</p>
+        <p>Vui lòng <a href="/auth/login/form">đăng nhập</a> với thông tin xác thực phù hợp để có quyền truy cập.</p>
+        <p>Nếu bạn nghĩ đây là một lỗi, vui lòng liên hệ với quản trị viên của bạn.</p>
+    </div>
+</body>
+</html>

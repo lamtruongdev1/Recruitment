@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Thanh Toán</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .cart-info {
+            background-color: #f8f9fa;
+            border-radius: .25rem;
+            padding: 1rem;
+        }
+        .total {
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+<div th:insert="~{NguoiTimViec/common/header :: header}" class="header"></div>
+
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-6">
+            <!-- Thông tin giỏ hàng -->
+            <div class="cart-info mb-4">
+                <h4>Thông Tin Giỏ Hàng</h4>
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Tên sản phẩm</th>
+                            <th>Số lượng</th>
+                            <th>Đơn giá</th>
+                            <th>Tổng</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="item : ${cartItems}">
+                            <td th:text="${item.name}">Tên sản phẩm</td>
+                            <td th:text="${item.quantity}">Số lượng</td>
+                            <td th:text="${item.unitPrice}">Đơn giá</td>
+                            <td th:text="${item.quantity * item.unitPrice}">Tổng</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="total">
+                    <h5>Tổng tiền: <span th:text="${totalAmount}">0</span> VNĐ</h5>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <!-- Form thanh toán -->
+            <form th:action="@{/process-payment}" method="post" class="form-group">
+                <div class="form-group">
+                    <label for="customerName">Họ và tên:</label>
+                    <input type="text" id="customerName" name="customerName" class="form-control" placeholder="Nhập họ và tên" required>
+                </div>
+                <div class="form-group">
+                    <label for="phoneNumber">Số điện thoại:</label>
+                    <input type="tel" id="phoneNumber" name="phoneNumber" class="form-control" placeholder="Nhập số điện thoại" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" name="email" class="form-control" placeholder="Nhập email" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Thanh Toán</button>
+            </form>
+        </div>
+    </div>
+</div>
+	<script>
+    function updateCartCount() {
+        fetch('/api/cart/total-cv')
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('cart-count').innerText = data;
+            })
+            .catch(error => console.error('Error fetching cart count:', error));
+    }
+
+    document.addEventListener("DOMContentLoaded", function() {
+        updateCartCount(); // Gọi API khi trang đã tải
+    });
+</script>
+
+<div th:insert="~{NguoiTimViec/common/footer :: footer}" class="footer"></div>
+
+<!-- Optional JavaScript -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
