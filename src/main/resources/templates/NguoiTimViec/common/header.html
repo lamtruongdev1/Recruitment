@@ -4,6 +4,7 @@
 <head>
 <meta charset="UTF-8">
 <title>Người tìm việc</title>
+
 <style >
 
 
@@ -38,10 +39,17 @@
                         </li>
                     </ul>
                     <!-- Call to Action Buttons and Dropdown Menu -->
-                    <div class="d-flex align-items-center">
-                        <a class="btn btn-outline-primary me-2" href="cart.html" th:href="@{/cart}">
-                            <i class="bi bi-cart"></i> <!-- Cart Icon -->
-                        </a>
+<div class="d-flex align-items-center">
+    <a class="btn btn-outline-primary me-2 badge-container" href="cart.html" th:href="@{/cart}">
+        <i class="bi bi-cart"></i> <!-- Cart Icon từ Bootstrap Icons -->
+        <span id="cart-count" class="badge">0</span> <!-- Thông báo số lượng -->
+    </a>
+</div>
+
+
+
+
+
                         <div class="dropdown">
                             <a class="btn btn-primary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
                                 <span class="me-2">🔒</span> Account
@@ -57,7 +65,20 @@
             </div>
         </nav>
     </header>
+	<script>
+    function updateCartCount() {
+        fetch('/api/cart/total-cv')
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('cart-count').innerText = data;
+            })
+            .catch(error => console.error('Error fetching cart count:', error));
+    }
 
+    document.addEventListener("DOMContentLoaded", function() {
+        updateCartCount(); // Gọi API khi trang đã tải
+    });
+</script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

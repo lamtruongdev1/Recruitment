@@ -12,6 +12,9 @@ import com.poly.Recruitment.util.Common;
 import com.poly.Recruitment.util.Keywords;
 import com.poly.Recruitment.util.RoleEnum;
 import com.poly.Recruitment.util.SessionUtil;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.http.MediaType;
@@ -65,22 +68,37 @@ public class AuthenticationController {
 
 	@GetMapping("/login/success")
 	public String successLogin() {
-		Authentication authenticationManager = SecurityContextHolder.getContext().getAuthentication();
-		UserDetails user = (UserDetails) authenticationManager.getPrincipal();
-		sessionUtil.setSessionId(Keywords.ACCOUNT_SESSION.name(), userService.findByEmail(user.getUsername()));
+	    // Lấy thông tin người dùng từ SecurityContext
+	    Authentication authenticationManager = SecurityContextHolder.getContext().getAuthentication();
+	    UserDetails user = (UserDetails) authenticationManager.getPrincipal();
 
-		String role = user.getAuthorities().iterator().next().getAuthority();
-		sessionUtil.setSessionId("userSessionEmail", user.getUsername());
+	    // Lưu thông tin người dùng vào session
+	    User loggedInUser = userService.findByEmail(user.getUsername());
+	    sessionUtil.setSessionId(Keywords.ACCOUNT_SESSION.name(), loggedInUser);
+	    sessionUtil.setSessionId("user_id", loggedInUser.getUserID()); // Lưu user_id vào session
+	    sessionUtil.setSessionId("userSessionEmail", user.getUsername());
 
-		if (role.equals(RoleEnum.USER.toString())) {
-			return "redirect:/nguoitimviec";
-		} else if (role.equals(RoleEnum.COMPANY.toString())) {
-			return "redirect:/index";
-		} else if (role.equals(RoleEnum.ADMIN.toString())) {
-			return "redirect:/admin/dashboard";
-		} else {
-			return "redirect:/login";
-		}
+	    // Xác định vai trò của người dùng
+	    String role = user.getAuthorities().iterator().next().getAuthority();
+
+	    // Chuyển hướng dựa trên vai trò của người dùng
+	    if (role.equals(RoleEnum.USER.toString())) {
+	        return "redirect:/nguoitimviec";
+	    } else if (role.equals(RoleEnum.COMPANY.toString())) {
+	        return "redirect:/index";
+	    } else if (role.equals(RoleEnum.ADMIN.toString())) {
+	        return "redirect:/admin/dashboard";
+	    } else if (role.equals(RoleEnum.FAQ.toString())) {
+	        return "redirect:/auth/error/disabled-account";
+	    } else {
+	        return "redirect:/login";
+	    }
+	}
+
+
+	@GetMapping("/error/disabled-account")
+	public String disabledAccount() {
+		return "/error/disabled-account";
 	}
 
 	@GetMapping("/login/failure")
@@ -96,69 +114,56 @@ public class AuthenticationController {
 
 	@PostMapping("/register/user")
 	@ResponseBody
-	public ResponseEntity<MessageResponse> registerUser(
-	        @RequestParam("name") String name,
-	        @RequestParam("email") String email,
-	        @RequestParam("phone") String phone,
-	        @RequestParam("address") String address,
-	        @RequestParam("password") String password,
-	        @RequestParam("confirmPassword") String confirmPassword,
-	        @RequestParam("avatarFile") MultipartFile avatarFile) {
+	public ResponseEntity<MessageResponse> registerUser(@RequestParam("name") String name,
+			@RequestParam("email") String email, @RequestParam("phone") String phone,
+			@RequestParam("skill") String skill, @RequestParam("address") String address,
+			@RequestParam("password") String password, @RequestParam("confirmPassword") String confirmPassword,
+			@RequestParam("avatarFile") MultipartFile avatarFile) {
 
-	    if (password == null || password.isEmpty() || !password.equals(confirmPassword)) {
-	        return new ResponseEntity<>(MessageResponse.builder()
-	                .message("Password cannot be null, empty or passwords do not match")
-	                .code(HttpStatus.BAD_REQUEST.value()).build(),
-	                HttpStatus.BAD_REQUEST);
-	    }
+		if (password == null || password.isEmpty() || !password.equals(confirmPassword)) {
+			return new ResponseEntity<>(
+					MessageResponse.builder().message("Password cannot be null, empty or passwords do not match")
+							.code(HttpStatus.BAD_REQUEST.value()).build(),
+					HttpStatus.BAD_REQUEST);
+		}
 
-	    // Validate email existence
-	    if (checkEmail(email)) {
-	        return new ResponseEntity<>(MessageResponse.builder()
-	                .message("Email Existed")
-	                .code(HttpStatus.BAD_REQUEST.value()).build(),
-	                HttpStatus.BAD_REQUEST);
-	    }
+		// Validate email existence
+		if (checkEmail(email)) {
+			return new ResponseEntity<>(
+					MessageResponse.builder().message("Email Existed").code(HttpStatus.BAD_REQUEST.value()).build(),
+					HttpStatus.BAD_REQUEST);
+		}
 
-	    // Handle avatar file upload
-	    String avatarFileName = null;
-	    if (avatarFile != null && !avatarFile.isEmpty()) {
-	        try {
-	            avatarFileName = avatarFile.getOriginalFilename();
-	            Path path = Paths.get(uploadDir, avatarFileName);
-	            Files.write(path, avatarFile.getBytes());
-	        } catch (IOException e) {
-	            e.printStackTrace();
-	            return new ResponseEntity<>(MessageResponse.builder()
-	                    .message("File upload failed")
-	                    .code(HttpStatus.INTERNAL_SERVER_ERROR.value()).build(),
-	                    HttpStatus.INTERNAL_SERVER_ERROR);
-	        }
-	    }
+		// Handle avatar file upload
+		String avatarFileName = null;
+		if (avatarFile != null && !avatarFile.isEmpty()) {
+			try {
+				avatarFileName = avatarFile.getOriginalFilename();
+				Path path = Paths.get(uploadDir, avatarFileName);
+				Files.write(path, avatarFile.getBytes());
+			} catch (IOException e) {
+				e.printStackTrace();
+				return new ResponseEntity<>(
+						MessageResponse.builder().message("File upload failed")
+								.code(HttpStatus.INTERNAL_SERVER_ERROR.value()).build(),
+						HttpStatus.INTERNAL_SERVER_ERROR);
+			}
+		}
 
-	    // Save user
-	    User user = userService.save(User.builder()
-	            .email(email)
-	            .password(passwordEncoder.encode(password))
-	            .role(RoleEnum.USER.toString())
-	            .phone(phone)
-	            .address(address)
-	            .name(name)
-	            .photo(avatarFileName)
-	            .build());
+		// Save user
+		User user = userService.save(User.builder().email(email).password(passwordEncoder.encode(password))
+				.role(RoleEnum.USER.toString()).phone(phone).address(address).name(name).photo(avatarFileName).build());
 
-	    // Save job seeker information
-	    NguoiTimViec nguoiTimViec = new NguoiTimViec();
-	    nguoiTimViec.setUser(user);
-	    nguoiTimViec.setAvatar(avatarFileName);
-	    nguoiTimViecService.save(nguoiTimViec);
+		// Save job seeker information
+		NguoiTimViec nguoiTimViec = new NguoiTimViec();
+		nguoiTimViec.setUser(user);
+		nguoiTimViec.setAvatar(avatarFileName);
+		nguoiTimViec.setSkill(skill);
+		nguoiTimViecService.save(nguoiTimViec);
 
-	    return new ResponseEntity<>(MessageResponse.builder()
-	            .message("Register User Success")
-	            .code(HttpStatus.OK.value())
-	            .data(nguoiTimViec).build(), HttpStatus.OK);
+		return new ResponseEntity<>(MessageResponse.builder().message("Register User Success")
+				.code(HttpStatus.OK.value()).data(nguoiTimViec).build(), HttpStatus.OK);
 	}
-
 
 	@PostMapping("/register/company")
 	@ResponseBody
@@ -254,14 +259,19 @@ public class AuthenticationController {
 	}
 
 	@GetMapping("/logout/success")
-	public String logoutSuccess() {
-		return "redirect:index";
+	public String logoutSuccess(HttpServletRequest request) {
+	    HttpSession session = request.getSession(false);
+	    if (session != null) {
+	        session.removeAttribute("cart"); // Xóa giỏ hàng khỏi session
+	        session.invalidate(); // Xóa toàn bộ session
+	    }
+	    return "redirect:/auth/login/form";
 	}
 
 	@GetMapping("/access-denied")
 	@ResponseBody
 	public String accessDenied() {
-		return "AccessDenied please Login";
+		return "redirect:/auth/login/form";
 	}
 
 	@GetMapping("/change-password/form")
@@ -292,39 +302,38 @@ public class AuthenticationController {
 
 	@PostMapping("/upload")
 	public String uploadFile(@RequestParam("file") MultipartFile file, Model model) {
-	    try {
-	        // Kiểm tra loại file
-	        String contentType = file.getContentType();
-	        if (!contentType.startsWith("image/")) {
-	            model.addAttribute("error", "Chỉ cho phép tải lên file ảnh.");
-	            return "accountmanager";
-	        }
+		try {
+			// Kiểm tra loại file
+			String contentType = file.getContentType();
+			if (!contentType.startsWith("image/")) {
+				model.addAttribute("error", "Chỉ cho phép tải lên file ảnh.");
+				return "accountmanager";
+			}
 
-	        // Kiểm tra kích thước file
-	        long maxFileSize = 5 * 1024 * 1024; // 5MB
-	        if (file.getSize() > maxFileSize) {
-	            model.addAttribute("error", "Kích thước file vượt quá giới hạn cho phép 5MB.");
-	            return "accountmanager";
-	        }
+			// Kiểm tra kích thước file
+			long maxFileSize = 5 * 1024 * 1024; // 5MB
+			if (file.getSize() > maxFileSize) {
+				model.addAttribute("error", "Kích thước file vượt quá giới hạn cho phép 5MB.");
+				return "accountmanager";
+			}
 
-	        // Tạo thư mục nếu chưa tồn tại
-	        Path directoryPath = Paths.get(uploadDir);
-	        if (!Files.exists(directoryPath)) {
-	            Files.createDirectories(directoryPath);
-	        }
+			// Tạo thư mục nếu chưa tồn tại
+			Path directoryPath = Paths.get(uploadDir);
+			if (!Files.exists(directoryPath)) {
+				Files.createDirectories(directoryPath);
+			}
 
-	        // Lưu file
-	        String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
-	        Path path = Paths.get(uploadDir + fileName);
-	        Files.write(path, file.getBytes());
+			// Lưu file
+			String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
+			Path path = Paths.get(uploadDir + fileName);
+			Files.write(path, file.getBytes());
 
-	        model.addAttribute("success", "Tải lên thành công: " + fileName);
-	    } catch (IOException e) {
-	        model.addAttribute("error", "Tải lên thất bại: " + e.getMessage());
-	    }
-	    return "accountmanager";
+			model.addAttribute("success", "Tải lên thành công: " + fileName);
+		} catch (IOException e) {
+			model.addAttribute("error", "Tải lên thất bại: " + e.getMessage());
+		}
+		return "accountmanager";
 	}
-
 
 	private boolean checkEmail(String mail) {
 		return userService.findByEmail(mail) != null;

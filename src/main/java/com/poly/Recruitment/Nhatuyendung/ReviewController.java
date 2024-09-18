@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.poly.Recruitment.dto.MailModel;
 import com.poly.Recruitment.dto.ReviewRequest;
 import com.poly.Recruitment.entity.NguoiTimViec;
 import com.poly.Recruitment.entity.Review;
@@ -30,8 +31,10 @@ import com.poly.Recruitment.entity.TinTuyenDung;
 import com.poly.Recruitment.repository.NguoiTimViecDAO;
 import com.poly.Recruitment.repository.ReviewDAO;
 import com.poly.Recruitment.repository.TinTuyenDungDAO;
+import com.poly.Recruitment.service.MailService;
 
 import ch.qos.logback.classic.Logger;
+import jakarta.mail.MessagingException;
 
 import org.springframework.web.bind.annotation.*;
 
@@ -49,8 +52,45 @@ public class ReviewController {
 
     @Autowired
     private ReviewDAO reviewRepository;
-   
-
+    @Autowired
+    private MailService mailService;
+    @PostMapping("/send-email")
+    public String sendEmail(
+    		
+            @RequestParam String email, 
+            @RequestParam String subject, 
+            @RequestParam String message, 
+            RedirectAttributes redirectAttributes,
+            Model model) {
+        try {
+            // Prepare MailModel
+            MailModel mailModel = MailModel.builder()
+                    .to(email)
+                    .subject(subject)
+                    .content(message)
+                    .from("travelbee@gmail.com") // Set your default sender email
+                    .build();
+            
+            // Send email
+            mailService.send(mailModel);
+            redirectAttributes.addFlashAttribute("success", "Email sent successfully!");
+            try {
+                ResponseEntity<List<NguoiTimViec>> response = restTemplate.exchange(
+                        "http://localhost:8080/api/reviews/jobseekers",
+                        HttpMethod.GET,
+                        null,
+                        new ParameterizedTypeReference<List<NguoiTimViec>>() {}
+                );
+                List<NguoiTimViec> jobseekers = response.getBody();
+                model.addAttribute("jobseekers", jobseekers);
+            } catch (Exception e) {
+                model.addAttribute("error", "Unable to fetch job seekers.");
+            }
+        } catch (MessagingException e) {
+            redirectAttributes.addFlashAttribute("error", "Failed to send email.");
+        }
+        return "review/jobseekerList";
+    }
 
     @RequestMapping("/jobseekers")
     public String getAllJobseekers(Model model) {

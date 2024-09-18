@@ -3,6 +3,8 @@ package com.poly.Recruitment.entity;
 import java.math.BigDecimal;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -33,8 +35,8 @@ public class CV {
     private String fileURL;
 
     @ManyToMany(mappedBy = "cvs", cascade = CascadeType.ALL)
+    @JsonBackReference 
     private List<Cart> carts;
-
 
     @PreRemove
     private void removeCarts() {
@@ -45,4 +47,3 @@ public class CV {
         }
     }
 }
-

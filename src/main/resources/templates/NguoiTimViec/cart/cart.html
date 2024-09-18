@@ -1,13 +1,25 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-	th:replace="~{/NguoiTimViec/index::dynamic(~{::body})}">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
     <title>Giỏ Hàng</title>
-    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.0/font/bootstrap-icons.min.css">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+ <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+<!-- Bootstrap Bundle with Popper -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<!-- SweetAlert2 CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+
+<!-- SweetAlert2 JS -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<link rel="stylesheet" href="/NguoiTimViec.css">
 
 </head>
 <body>
+<div th:insert="~{NguoiTimViec/common/header :: header}"></div>
     <div class="container">
         <h2 class="text-center mt-5">Giỏ Hàng</h2>
         <div class="card">
@@ -23,22 +35,8 @@
                             <th>Hành Động</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <tr th:each="cv, iterStat : ${cartItems}">
-                            <td th:text="${iterStat.index + 1}"></td>
-                            <td th:text="${cv.name}"></td>
-                            <td th:text="${cv.description}"></td>
-                            <td th:text="${cv.price}" class="price" th:attr="data-price=${cv.price}"></td>
-                            <td>
-                                <iframe th:src="@{'/api/files/cv/' + ${cv.fileUrl}}"
-                                        width="100" height="100" class="thumbnail" style="border: none;"></iframe>
-                            </td>
-                            <td>
-                                <a class="btn btn-danger" th:href="@{/cart/delete/{cvId}(cvId=${cv.id})}">
-                                    Xoá
-                                </a>
-                            </td>
-                        </tr>
+                    <tbody id="cartItems">
+                        <!-- Rows will be inserted here by JavaScript -->
                     </tbody>
                 </table>
                 <div class="row mt-4">
@@ -52,28 +50,70 @@
             </div>
         </div>
     </div>
+    <div th:insert="~{NguoiTimViec/common/footer :: footer}"></div>
 
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            let prices = document.querySelectorAll('.price');
-            let total = 0;
+        $(document).ready(function() {
+            // Function to fetch cart data and update the table
+            function loadCartData() {
+                $.ajax({
+                    url: 'http://localhost:8080/api/cart/my-cart',
+                    method: 'GET',
+                    success: function(response) {
+                        // Clear existing rows
+                        $('#cartItems').empty();
 
-            prices.forEach(function(priceElement) {
-                let price = parseFloat(priceElement.getAttribute('data-price'));
-                if (!isNaN(price)) {
-                    total += price;
-                }
-            });
+                        // Initialize total price
+                        var totalPrice = 0;
 
-            const totalPriceElement = document.getElementById('totalPrice');
-            if (totalPriceElement) {
-                totalPriceElement.innerText = total.toLocaleString('vi-VN', {
-                    style: 'currency',
-                    currency: 'VND'
+                        // Iterate through the CVs in the response
+                        $.each(response.cvs, function(index, cv) {
+                            // Add row to the table
+                            $('#cartItems').append(`
+                                <tr>
+                                    <td>${index + 1}</td>
+                                    <td>${cv.name}</td>
+                                    <td>${cv.description}</td>
+                                    <td class="price" data-price="${cv.price}">${cv.price}</td>
+                                    <td>
+                                        <iframe src="/api/files/cv/${cv.fileURL}" width="100" height="100" class="thumbnail"></iframe>
+                                    </td>
+                                    <td>
+                                        <a class="btn btn-danger" href="/cart/delete/${cv.idCV}">
+                                            Xoá
+                                        </a>
+                                    </td>
+                                </tr>
+                            `);
+
+                            // Update total price
+                            totalPrice += parseFloat(cv.price);
+                        });
+
+                        // Update the total price display
+                        $('#totalPrice').text(totalPrice.toFixed(2) + ' VNĐ');
+                    },
+                    error: function() {
+                        alert('Failed to load cart data.');
+                    }
                 });
-            } else {
-                console.error("Element with ID 'totalPrice' not found.");
             }
+            
+
+            // Load cart data when the page is ready
+            loadCartData();
+        });
+        function updateCartCount() {
+            fetch('/api/cart/total-cv')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('cart-count').innerText = data;
+                })
+                .catch(error => console.error('Error fetching cart count:', error));
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            updateCartCount(); // Gọi API khi trang đã tải
         });
     </script>
 </body>

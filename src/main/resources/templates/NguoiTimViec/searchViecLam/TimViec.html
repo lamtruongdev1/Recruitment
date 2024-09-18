@@ -126,7 +126,7 @@
 							<p class="job-description" th:text="${job.description}"></p>
 
 							<!-- Apply Button -->
-						<a class="btn btn-primary" th:href="@{/apply(jobId=${job.jobId})}"> Xem Chi Tiết </a>
+						<a class="btn btn-primary" th:href="@{/apply(jobId=${job.jobId})}"> Ứng tuyển ngay </a>
 
 
 
@@ -147,43 +147,58 @@
 	<script
 		src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
 
-	<script>
+<script>
+function searchJobs() {
+    const keyword = document.getElementById('searchInput').value;
+    fetch(`/api/jobs/search?keyword=${encodeURIComponent(keyword)}`)
+        .then(response => response.json())
+        .then(data => {
+            const jobListingsDiv = document.getElementById('jobListings');
+
+            // Clear existing job listings
+            jobListingsDiv.innerHTML = '';
+
+            if (data.length > 0) {
+                data.forEach(job => {
+                    const jobElement = document.createElement('div');
+                    jobElement.classList.add('col-md-4');
+                    jobElement.innerHTML = `
+                        <div class="job-card">
+                            <img src="/images/${job.image}" alt="Job Image" class="image" />
+                            <div class="title">${job.title}</div>
+                            <div class="position">${job.position}</div>
+                            <div class="company">${job.postedBy}</div>
+                            <div class="salary">${job.salary != null ? 'Lương: ' + job.salary + ' VND' : 'Lương: Chưa xác định'}</div>
+                            <p class="mt-2">${job.description}</p>
+                            <a class="btn btn-primary" href="/apply?jobId=${job.jobId}">Ứng tuyển ngay</a>
+                        </div>
+                    `;
+                    jobListingsDiv.appendChild(jobElement);
+                });
+
+                // Các cài đặt khác nếu cần
+            } else {
+                Swal.fire({
+                    icon: 'info',
+                    title: 'Không tìm thấy công việc nào',
+                    text: 'Không có công việc nào phù hợp với từ khóa tìm kiếm của bạn.',
+                    confirmButtonText: 'OK'
+                });
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Đã xảy ra lỗi',
+                text: 'Không thể tìm kiếm công việc. Vui lòng thử lại sau.',
+                confirmButtonText: 'OK'
+            });
+        });
+}
 
 
-    function searchJobs() {
-        const keyword = document.getElementById('searchInput').value;
-        fetch(`/api/jobs/search?keyword=${encodeURIComponent(keyword)}`)
-            .then(response => response.json())
-            .then(data => {
-                const resultsDiv = document.getElementById('searchResults');
-                const jobListingsDiv = document.getElementById('jobListings');
-
-                // Clear existing job listings
-                jobListingsDiv.innerHTML = '';
-
-                if (data.length > 0) {
-                    data.forEach(job => {
-                        const jobElement = document.createElement('div');
-                        jobElement.classList.add('col-md-4');
-                        jobElement.innerHTML = `
-                            <div class="job-card">
-                                <img src="${job.image}" alt="Job Image" class="image" />
-                                <div class="title">${job.title}</div>
-                                <div class="position">${job.position}</div>
-                                <div class="company">${job.postedBy}</div>
-                                <div class="salary">${job.salary != null ? 'Lương: ' + job.salary + ' VND' : 'Lương: Chưa xác định'}</div>
-                                <p class="mt-2">${job.description}</p>
-                                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#applyModal" data-job-id="${job.jobId}">Ứng Tuyển</button>
-                            </div>
-                        `;
-                        jobListingsDiv.appendChild(jobElement);
-                    });
-                } else {
-                    resultsDiv.innerHTML = '<p>Không tìm thấy công việc nào phù hợp.</p>';
-                }
-            })
-            .catch(error => console.error('Error:', error));
-    }
 </script>
+
 </body>
 </html>

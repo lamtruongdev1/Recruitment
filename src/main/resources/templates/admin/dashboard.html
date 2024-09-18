@@ -45,9 +45,10 @@
     <script>
         var ctx = document.getElementById('statsChart').getContext('2d');
         var statsChart = new Chart(ctx, {
+
             type: 'bar',
             data: {
-                labels: ['Users', 'CVs', 'Jobs', 'Reviews'],
+                labels: ['totalUsers', 'CVs', 'Jobs', 'Reviews'],
                 datasets: [{
                     label: 'Statistics',
                     data: [1234, 567, 345, 89], // Example data

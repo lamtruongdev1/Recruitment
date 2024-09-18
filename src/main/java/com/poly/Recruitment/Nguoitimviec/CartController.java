@@ -34,44 +34,12 @@ public class CartController {
 //		return "NguoiTimViec/cart/cart";
 //	}
 	
-	   @RequestMapping()
-	   public String viewCart(Model model) {
-		   
-		    String cartApiUrl = "http://localhost:8080/api/cart"; // URL của API Cart
+	   @RequestMapping
+	   public String viewCart( Model model) {
+	
+	       return "NguoiTimViec/cart/cart";
+	   }
 
-		    try {
-		        // Gọi API và nhận dữ liệu dưới dạng String
-		        ResponseEntity<String> response = restTemplate.exchange(
-		                cartApiUrl,
-		                HttpMethod.GET,
-		                null,
-		                String.class
-		        );
-
-		        // In JSON Response ra console để kiểm tra
-		        String jsonResponse = response.getBody();
-		        System.out.println("Response JSON: " + jsonResponse);
-
-		        // Chuyển đổi JSON Response thành danh sách CartDTO
-		        ObjectMapper objectMapper = new ObjectMapper();
-		        List<CartDTO> cartList = objectMapper.readValue(jsonResponse, new TypeReference<List<CartDTO>>() {});
-
-		        if (cartList != null && !cartList.isEmpty()) {
-		            // Lấy dữ liệu từ danh sách đầu tiên
-		            CartDTO cart = cartList.get(0);
-
-		            model.addAttribute("cartItems", cart.getCvs());
-		            model.addAttribute("cartId", cart.getCartId());
-		            model.addAttribute("userId", cart.getUserId());
-		        } else {
-		            model.addAttribute("error", "Cart data is empty or not found.");
-		        }
-		    } catch (Exception e) {
-		        System.err.println("Error fetching cart: " + e.getMessage());
-		        model.addAttribute("error", "Unable to fetch cart.");
-		    }
-	        return "NguoiTimViec/cart/cart";
-	    }
 	   
 	   @RequestMapping("/delete/{cvId}")
 	    public String deleteCvFromCart(@PathVariable Long cvId, HttpSession session, Model model) {

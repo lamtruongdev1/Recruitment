@@ -32,7 +32,7 @@ public class DonUngTuyen {
     @Column(name = "address", columnDefinition = "nvarchar(max)")
     private String address;
 
-    @Column(length = 255 ,columnDefinition = "nvarchar(max)")
+    @Column(name = "status", columnDefinition = "nvarchar(max)")
     private String status;
 
     @Column(name = "cv_url", columnDefinition = "nvarchar(max)")

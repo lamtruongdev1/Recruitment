@@ -6,10 +6,16 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Danh sách Tin Đăng Tuyển</title>
+  <link rel="icon" href="/images/icon.png" type="image/png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nhà Tuyển dụng</title>
+    <link th:insert="~{common/taglib :: taglib}" />
 
 </head>
 
 <body>
+
 
 
 	<div class="container-fluid mt-4">
@@ -333,7 +339,21 @@
 					</div>
 				</div>
 			</div>
+			
 		</div>
+		    <script>
+        // Kiểm tra và hiển thị thông báo
+        var message = /*[[${message}]]*/ '';
+        if (message) {
+            Swal.fire({
+                icon: message.includes('thành công') ? 'success' : 'error',
+                title: message.includes('thành công') ? 'Thành công' : 'Lỗi',
+                text: message,
+                confirmButtonText: 'OK'
+            });
+        }
+    </script>
 </body>
+
 
 </html>

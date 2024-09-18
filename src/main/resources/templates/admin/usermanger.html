@@ -61,11 +61,25 @@
     <div class="main-content">
         <div class="max-w-3xl mx-auto p-6 bg-white rounded-lg shadow-lg mt-10">
             <h2 class="text-2xl font-bold mb-4">Danh Sách Người Dùng</h2>
+
+            <!-- Search Box -->
+            <div class="mb-4">
+                <input type="text" id="searchBox" placeholder="Tìm kiếm người dùng theo tên..." class="border p-2 rounded">
+                <button onclick="searchUsers()" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Tìm kiếm</button>
+            </div>
+
+            <!-- Export Excel Button -->
+            <div class="mb-4">
+                <a href="/admin/users/export" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">Xuất Excel</a>
+            </div>
+
+            <!-- User List -->
             <ul id="userList" class="list-disc space-y-2">
                 <!-- User list will be loaded here -->
             </ul>
             <div id="loading" class="text-gray-500">Loading...</div>
         </div>
+        
 
         <!-- Footer -->
         <div class="footer">
@@ -75,6 +89,7 @@
 
     <!-- JavaScript -->
     <script>
+    // hiển thị toàn bộ user
         document.addEventListener('DOMContentLoaded', () => {
             loadUsers();
 
@@ -89,12 +104,26 @@
 
                     const users = await response.json();
 
-                    userListElement.innerHTML = users.map(user => `
-                        <li class="flex justify-between items-center p-2 border rounded mb-2">
-                            <span>${user.name} (${user.email})</span>
-                            <button onclick="deleteUser(${user.userID})" class="bg-red-500 text-white px-4 py-1 rounded hover:bg-red-600">Xóa</button>
+                    userListElement.innerHTML = users
+                    .filter(user => user.role !== 'ADMIN')  // Lọc ra các user không phải ADMIN
+                    .map(user => `
+                        <li class="flex justify-between items-center p-4 border rounded mb-2">
+                            <div>
+                                <p><strong>Tên:</strong> ${user.name}</p>
+                                <p><strong>Email:</strong> ${user.email}</p>
+                                <p><strong>Vai trò:</strong> ${user.role}</p>
+                                <p><strong>Số điện thoại:</strong> ${user.phone || 'N/A'}</p>
+                                <p><strong>Địa chỉ:</strong> ${user.address}</p>
+                           
+                            
+                            </div>
+                            <div>
+                                <button onclick="setRoleToFAQ(${user.userID})" class="bg-blue-500 text-white px-4 py-1 rounded hover:bg-blue-600">Khoá tài khoản</button>
+                                <button onclick="showUpdateRoleModal(${user.userID}, '${user.role}')" class="bg-yellow-500 text-white px-4 py-1 rounded hover:bg-yellow-600">Kích Hoạt</button>
+                            </div>
                         </li>
                     `).join('');
+
                 } catch (error) {
                     console.error('Error loading users:', error);
                     Swal.fire({
@@ -106,17 +135,17 @@
                     loadingElement.style.display = 'none';
                 }
             }
-
-            window.deleteUser = async function(id) {
+// vô hiệu hoá tài khoản
+            window.setRoleToFAQ = async function(id) {
                 try {
-                    const response = await fetch(`/admin/users/${id}`, {
-                        method: 'DELETE'
+                    const response = await fetch(`/admin/users/${id}/set-to-faq`, {
+                        method: 'PUT'
                     });
 
                     if (response.ok) {
                         Swal.fire({
-                            title: 'Xóa Thành Công',
-                            text: 'Người dùng đã được xóa!',
+                            title: 'Cập nhật Thành Công',
+                            text: 'Vai trò người dùng đã được cập nhật thành FAQ!',
                             icon: 'success'
                         });
                         loadUsers(); // Reload the user list
@@ -129,14 +158,102 @@
                         });
                     }
                 } catch (error) {
-                    console.error('Error deleting user:', error);
+                    console.error('Error setting role to FAQ:', error);
                     Swal.fire({
                         title: 'Lỗi',
-                        text: 'Không thể xóa người dùng.',
+                        text: 'Không thể cập nhật vai trò người dùng.',
                         icon: 'error'
                     });
                 }
             }
+//tìm kiếm
+            window.searchUsers = async function() {
+                const name = document.getElementById('searchBox').value;
+                const loadingElement = document.getElementById('loading');
+                const userListElement = document.getElementById('userList');
+                loadingElement.style.display = 'block';
+
+                try {
+                    const response = await fetch(`/admin/users/search?name=${name}`);
+                    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+
+                    const users = await response.json();
+
+                    userListElement.innerHTML = users
+                    .filter(user => user.role !== 'ADMIN')  // Lọc ra các user không phải ADMIN
+                    .map(user => `
+                        <li class="flex justify-between items-center p-4 border rounded mb-2">
+                            <div>
+                                <p><strong>Tên:</strong> ${user.name}</p>
+                                <p><strong>Email:</strong> ${user.email}</p>
+                                <p><strong>Vai trò:</strong> ${user.role}</p>
+                                <p><strong>Số điện thoại:</strong> ${user.phone || 'N/A'}</p>
+                                <p><strong>Địa chỉ:</strong> ${user.address}</p>
+                           
+                            
+                            </div>
+                            <div>
+                                <button onclick="setRoleToFAQ(${user.userID})" class="bg-blue-500 text-white px-4 py-1 rounded hover:bg-blue-600">Khoá tài khoản</button>
+                                <button onclick="showUpdateRoleModal(${user.userID}, '${user.role}')" class="bg-yellow-500 text-white px-4 py-1 rounded hover:bg-yellow-600">Kích Hoạt</button>
+                            </div>
+                        </li>
+                    `).join('');
+
+                } catch (error) {
+                    console.error('Error searching users:', error);
+                    Swal.fire({
+                        title: 'Lỗi',
+                        text: 'Không thể tìm kiếm người dùng.',
+                        icon: 'error'
+                    });
+                } finally {
+                    loadingElement.style.display = 'none';
+                }
+            }
+            
+            window.showUpdateRoleModal = function(userID, currentRole) {
+                Swal.fire({
+                    title: 'Kích Hoạt',
+                    input: 'text',
+                    inputValue: currentRole,
+                    showCancelButton: true,
+                    confirmButtonText: 'Cập nhật',
+                    cancelButtonText: 'Hủy',
+                    inputPlaceholder: 'Nhập vai trò '
+                }).then(async (result) => {
+                    if (result.isConfirmed) {
+                        const newRole = result.value;
+                        try {
+                            const response = await fetch(`/admin/users/${userID}/role?role=${newRole}`, {
+                                method: 'PUT'
+                            });
+
+                            if (response.ok) {
+                                Swal.fire({
+                                    title: 'Cập nhật Thành Công',
+                                    text: 'Vai trò người dùng đã được cập nhật!',
+                                    icon: 'success'
+                                });
+                                loadUsers(); // Reload the user list
+                            } else {
+                                const errorText = await response.text();
+                                Swal.fire({
+                                    title: 'Lỗi',
+                                    text: errorText,
+                                    icon: 'error'
+                                });
+                            }
+                        } catch (error) {
+                            console.error('Error updating user role:', error);
+                            Swal.fire({
+                                title: 'Lỗi',
+                                text: 'Không thể cập nhật vai trò người dùng.',
+                                icon: 'error'
+                            });
+                        }
+                    }
+                });
+            };
         });
     </script>
 </body>
